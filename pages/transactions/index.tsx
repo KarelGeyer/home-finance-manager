@@ -1,7 +1,5 @@
-import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 import { styled } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -11,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 
 import AppBarMenu from "../../components/AppBar";
 import LineGraph from "../../components/LineGraph";
-import Transaction from "../../components/Transaction";
+import Transaction, {IProps as TransactionProps} from "../../components/Transaction";
 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
@@ -28,19 +26,19 @@ const GridContainer = styled(Grid)(() => ({
   width: '100%'
 }))
 
-const Transactions = () => {
-  const [filterValue, setFilterValue] = useState('Group');
+const Transactions: React.FC = () => {
+  const [filterValue, setFilterValue] = useState<string>('Group');
 
-  const links = ['overview', 'account', 'calculator']
+  const links: string[] = ['overview', 'account', 'calculator']
 
-  const selectFilter = (e) => {
+  const selectFilter = (e: any) => {
     setFilterValue(e.target.value)
   }
 
-  const fakeDates = ['1.1.', '5.1', '12.1', '15.1', '18.1', '26.1', '31.1']
-  const fakeSpendings = [1000, 6850, 1240, 18000, 512, 6914, 1105]
+  const fakeDates: string[] = ['1.1.', '5.1', '12.1', '15.1', '18.1', '26.1', '31.1']
+  const fakeSpendings: number[] = [1000, 6850, 1240, 18000, 512, 6914, 1105]
 
-  const TransactionFakeData = [
+  const TransactionFakeData: TransactionProps[] = [
     {
       name: 'Shopping food',
       user: 'Karel Geyer',
@@ -96,7 +94,7 @@ const Transactions = () => {
           </Typography>
           <Box>
             
-            {TransactionFakeData.map(transaction => (
+            {TransactionFakeData.map((transaction: TransactionProps) => (
               <Transaction 
                 name={transaction.name} 
                 user={transaction.user} 

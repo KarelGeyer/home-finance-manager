@@ -1,20 +1,20 @@
 import {useEffect} from 'react';
-import { useRouter } from "next/dist/client/router";
+import { NextRouter, useRouter } from "next/dist/client/router";
 import Box from '@mui/material/Box';
 import WarningIcon from '@mui/icons-material/Warning';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-const NotFound = () => {
-  const router = useRouter()
+const NotFound: React.FC = () => {
+  const router: NextRouter = useRouter()
 
-  useEffect(() => {
-    setTimeout(() => {
+  useEffect((): void => {
+    setTimeout((): void => {
       redirect()
     }, 5000)
   });
 
-  const redirect = () => {
+  const redirect = (): void => {
     router.push('/');
   }
 
@@ -36,7 +36,7 @@ const NotFound = () => {
       <Typography variant="h3" color="error" sx={{ m: 2, fontFamily: 'Montserrat', fontWeight: 600, textShadow: '8px 8px 10px #000, 5px 5px 15px #000' }}>
         PAGE NOT FOUND!
       </Typography>
-      <Typography variant="h5" sx={{ m: 2, fontFamily: 'Montserrat', fontWeight: 600, textShadow: '1px 0px 3px #FFF, 1px 0px 1px #FFF' , fontColor: "#000" }}>
+      <Typography variant="h5" sx={{ m: 2, fontFamily: 'Montserrat', fontWeight: 600, textShadow: '1px 0px 3px #FFF, 1px 0px 1px #FFF' , color: "#000" }}>
         You will be redirected back in 5 seconds, in case it does not happen, click the button bellow
       </Typography>
       <Button 

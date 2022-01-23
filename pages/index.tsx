@@ -8,12 +8,12 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-export default function Home() {
+const Home: React.FC = () => {
   const router = useRouter()
 
-  const navigate = (e) => {
+  const navigate = (e: any) => {
     const {target} = e
-    const link = target.innerText?.toLowerCase()
+    const link: string = target.innerText?.toLowerCase()
     
     router.push(`/${link}`)
   }
@@ -124,3 +124,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default Home

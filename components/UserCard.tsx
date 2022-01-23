@@ -5,8 +5,14 @@ import Divider from '@mui/material/Divider';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EuroIcon from '@mui/icons-material/Euro';
 
+export interface IProps {
+  user: {
+    name: string,
+    amount: string
+  }
+}
 
-const UserCard = ({ user }) => {
+const UserCard: React.FC<IProps> = ({ user }) => {
   const {name, amount} = user
 
   return (

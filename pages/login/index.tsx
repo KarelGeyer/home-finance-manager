@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRouter } from "next/dist/client/router";
+import { NextRouter, useRouter } from "next/dist/client/router";
 import Box from '@mui/material/Box';
 import styles from '../../styles/Login.module.css';
 import TextField from '@mui/material/TextField';
@@ -7,10 +7,10 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const Index = () => {
-  const router = useRouter()
+const Index: React.FC = () => {
+  const router: NextRouter = useRouter()
 
-  const handleSubmit = () => {
+  const handleSubmit = (): void => {
     router.push('/')
   }
 

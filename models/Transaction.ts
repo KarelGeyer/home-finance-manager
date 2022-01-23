@@ -1,5 +1,16 @@
 import mongoose from 'mongoose';
 
+interface Transaction {
+  name: string,
+  person: string,
+  category: string,
+  sum: number,
+  currency: string,
+  month?: string,
+  isLoand?: boolean,
+  tags?: string | string[]
+}
+
 const Transaction = new mongoose.Schema({
   name: {
     type: String,
@@ -14,17 +25,15 @@ const Transaction = new mongoose.Schema({
     required: true,
   },
   tags: {
-    type: String,
+    type: String || Array,
   },
   sum: {
     type: Number,
+    required: true,
   },
   currency: {
     type: String,
     required: true,
-  },
-  date: {
-    type: new Date(),
   },
   month: {
     type: String,
@@ -34,4 +43,4 @@ const Transaction = new mongoose.Schema({
   }
 });
 
-export default mongoose.model('Transaction', Transaction);
+export default mongoose.model<Transaction>('Transaction', Transaction);

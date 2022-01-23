@@ -1,6 +1,11 @@
 import { Pie } from 'react-chartjs-2';
 
-const PieGraph = ({data, labels}) => {
+interface IProps {
+  data: {label: string, datasets: number[]},
+  labels: string[]
+}
+
+const PieGraph: React.FC<IProps> = ({data, labels}) => {
   return (
     <Pie
       data={{
@@ -26,24 +31,11 @@ const PieGraph = ({data, labels}) => {
               'rgba(255, 159, 64, 1)'
             ],
             borderWidth: 2,
-            showLine: false,
           }
         ],
       }}
       options={{
         maintainAspectRatio: false,
-        scales: {
-          xAxes: [{
-            gridLines: {
-              display: false
-            }
-          }],
-          yAxes: [{
-            gridLines: {
-              display: false
-            }
-          }]
-        }
       }} 
     />
   )

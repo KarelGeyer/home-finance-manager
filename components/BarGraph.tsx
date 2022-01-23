@@ -1,6 +1,11 @@
 import { Bar } from 'react-chartjs-2';
 
-const BarGraph = ({data, labels}) => {
+interface IProps {
+  data: {label: string, datasets: number[]},
+  labels: string[]
+}
+
+const BarGraph: React.FC<IProps> = ({data, labels}) => {
   return (
     <Bar
       data={{
@@ -26,7 +31,6 @@ const BarGraph = ({data, labels}) => {
               'rgba(255, 159, 64, 1)'
             ],
             borderWidth: 2,
-            showLine: false,
           }
         ],
       }} 

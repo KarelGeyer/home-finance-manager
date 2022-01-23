@@ -1,6 +1,11 @@
 import { Line } from 'react-chartjs-2';
 
-const LineGraph = ({data, labels}) => {
+interface IProps {
+  data: number[],
+  labels: string[]
+}
+
+const LineGraph: React.FC<IProps> = ({data, labels}) => {
   return (
     <Line
       className='lineGraph'
@@ -18,18 +23,6 @@ const LineGraph = ({data, labels}) => {
       }}
       options={{
         maintainAspectRatio: false,
-        scales: {
-          xAxes: [{
-            gridLines: {
-              display: false
-            }
-          }],
-          yAxes: [{
-            gridLines: {
-              display: false
-            }
-          }]
-        }
       }}
     />
   )

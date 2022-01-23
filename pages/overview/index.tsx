@@ -9,7 +9,7 @@ import AppBarMenu from "../../components/AppBar";
 import IconCard from "../../components/IconCard";
 import UserCard from "../../components/UserCard";
 import PieGraph from "../../components/PieGraph";
-import BarGraph from "../../components/BarGraph";calc
+import BarGraph from "../../components/BarGraph";
 
 import EuroIcon from '@mui/icons-material/Euro';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -31,9 +31,9 @@ const GridItem = styled(Grid)(() => ({
   display: 'flex',
 }))
 
-const OverView = () => {
-  const links = ['transactions', 'account', 'calculator']
-  const users = [
+const OverView: React.FC = () => {
+  const links: string[] = ['transactions', 'account', 'calculator']
+  const users: {name: string, amount: string}[] = [
     {
       name: 'Karel Geyer',
       amount: '400'
@@ -44,7 +44,7 @@ const OverView = () => {
     }
   ];
 
-  const pieGraphData = {
+  const pieGraphData: {labels: string[], data: {label: string, datasets: number[]}} = {
     labels: ['Test1', 'Test1', 'Test1', 'Test1'],
     data: {
       label: 'Monthly Expenses',
@@ -52,7 +52,7 @@ const OverView = () => {
     }
   }
 
-  const monthsOverviewData = {
+  const monthsOverviewData: {labels: string[], data: {label: string, datasets: number[]}} = {
     labels: ['Month1', 'Month2', 'Month3', 'Month4', 'Month5', 'Month6'],
     data: {
       label: 'This month',
@@ -60,7 +60,7 @@ const OverView = () => {
     }
   }
 
-  const usersBalanceData = {
+  const usersBalanceData: {labels: string[], data: {label: string, datasets: number[]}} = {
     labels: ['Test1', 'Test1'],
     data: {
       label: 'This month',
@@ -86,7 +86,7 @@ const OverView = () => {
           </Grid>
         </GridItem>
 
-        <GridItem item xs={12} md={5} sx={{ diplay: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 40px', borderRight: '1px solid lightgrey' }}>
+        <GridItem item xs={12} md={5} direction='row' sx={{ justifyContent: 'center', alignItems: 'center', padding: '0 40px', borderRight: '1px solid lightgrey' }}>
           <BarGraph labels={monthsOverviewData.labels} data={monthsOverviewData.data} />
         </GridItem>
 
@@ -94,7 +94,7 @@ const OverView = () => {
           <Grid container sx={{ minWidth: '200px' }}>
             <Grid item xs={7}>
               
-              {users.map(user => <UserCard user={user} key={user.name}/>)}
+              {users.map((user: {name:string, amount: string}, index: number) => <UserCard user={user} key={index}/>)}
 
               <Box sx={{ display: 'flex', padding: '5px 15px', minWidth: '200px' }}>
                 <AccountCircleIcon
@@ -121,7 +121,7 @@ const OverView = () => {
         </GridItem>
 
 
-        <GridItem item xs={12} md={5} sx={{ diplay: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 40px' }}>
+        <GridItem item xs={12} md={5} direction='row' sx={{ justifyContent: 'center', alignItems: 'center', padding: '0 40px' }}>
           <BarGraph labels={usersBalanceData.labels} data={usersBalanceData.data} />
         </GridItem>
 

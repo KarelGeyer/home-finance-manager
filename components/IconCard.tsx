@@ -14,7 +14,11 @@ import CoffeeMakerIcon from '@mui/icons-material/CoffeeMaker';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
-const layoutData = [
+export interface IProps {
+  data?: any //preparation for conecting to dp, type is yet unknown
+}
+
+const layoutData: {name: string, value: string}[] = [
   {
     name: 'HOME',
     value: '100'
@@ -65,27 +69,27 @@ const layoutData = [
   },
 ]
 
-const IconCard = ({ data }) => {
+const IconCard: React.FC<IProps> = ({ data }) => {
   const thisData = data // preparation for database connection
   return (
     <>
-      {!thisData && layoutData.map(item => {
+      {!thisData && layoutData.map((item: {name: string, value: string} )=> {
         const {name, value} = item
         return (
           <Grid item xs={3} md={3} sx={{ textAlign: 'center', paddingTop: '20px' }} key={name}>
       
-            {name === 'HOME' && <HomeIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'FREE TIME' && <SportsEsportsIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'SHOPPING' && <ShoppingCartIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'VACATION' && <FlightIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'INVEST.' && <EuroIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'TELCO' && <SettingsInputAntennaIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'CLOTHS' && <CheckroomIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'OTHER' && <CircleIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'GEAR' && <CoffeeMakerIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'ENERGY' && <FlashOnIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'TRANSPORT' && <CommuteIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
-            {name === 'DAMAGE' && <LocalFireDepartmentIcon size="medium" edge="start" color="inherit" aria-label="menu" />}
+            {name === 'HOME' && <HomeIcon  fontSize="medium" />}
+            {name === 'FREE TIME' && <SportsEsportsIcon  fontSize="medium" />}
+            {name === 'SHOPPING' && <ShoppingCartIcon  fontSize="medium" />}
+            {name === 'VACATION' && <FlightIcon  fontSize="medium" />}
+            {name === 'INVEST.' && <EuroIcon  fontSize="medium" />}
+            {name === 'TELCO' && <SettingsInputAntennaIcon  fontSize="medium" />}
+            {name === 'CLOTHS' && <CheckroomIcon  fontSize="medium" />}
+            {name === 'OTHER' && <CircleIcon  fontSize="medium" />}
+            {name === 'GEAR' && <CoffeeMakerIcon  fontSize="medium" />}
+            {name === 'ENERGY' && <FlashOnIcon  fontSize="medium" />}
+            {name === 'TRANSPORT' && <CommuteIcon  fontSize="medium" />}
+            {name === 'DAMAGE' && <LocalFireDepartmentIcon  fontSize="medium" />}
             
             <Typography variant="subtitle1" component="div" sx={{ fontFamily: 'Montserrat' }}>
               {name}

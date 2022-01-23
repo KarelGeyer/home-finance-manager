@@ -1,5 +1,10 @@
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import { ReactFragment } from 'react';
+
+interface IProps {
+  children?: ReactFragment
+}
 
 const MaxWidthWrapper = styled(Box)(() => ({
   height: '100vh',
@@ -11,7 +16,7 @@ const MaxWidthWrapper = styled(Box)(() => ({
   margin: '0 auto'
 }))
 
-const MaxWidth = ({children}) => {
+const MaxWidth: React.FC<IProps> = ({children}) => {
   return (
     <MaxWidthWrapper>
       {children}
