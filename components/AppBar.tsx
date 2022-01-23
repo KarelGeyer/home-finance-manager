@@ -1,5 +1,5 @@
-import { useRouter } from "next/dist/client/router";
-import { useState } from "react";
+import { NextRouter, useRouter } from "next/dist/client/router";
+import { ReactChild, ReactFragment, useState } from "react";
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -10,33 +10,41 @@ import Select from '@mui/material/Select';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
+interface IProps {
+  heading: string,
+  group?: boolean,
+  monthPicker?: boolean,
+  children?: ReactFragment,
+  links: string[] 
+}
+
 const LineBar = styled(AppBar)(() => ({
   height: '65px',
   borderTopLeftRadius: '5px',
   borderTopRightRadius: '5px',
 }))
 
-const AppBarMenu = ({ heading, group, monthPicker, children, links }) => {
-  const router = useRouter()
+const AppBarMenu: React.FC<IProps> = ({ heading, group, monthPicker, children, links }) => {
+  const router: NextRouter = useRouter()
 
-  const [selectValue, setSelectValue] = useState('Group');
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectValue, setSelectValue] = useState<string>('Group');
+  const [anchorEl, setAnchorEl] = useState<any>(null);
   const open = Boolean(anchorEl);
 
-  const handleSelect = (e) => {
+  const handleSelect = (e: any): void => {
     setSelectValue(e.target.value)
   }
 
-  const openMenu = (event) => {
-    setAnchorEl(event.currentTarget);
+  const openMenu = (e: any): void => {
+    setAnchorEl(e.currentTarget);
   };
 
-  const closeMenu = () => {
+  const closeMenu = (): void => {
     setAnchorEl(null);
   };
 
-  const navigateTo = (e) => {
-    const link = e.target.innerText.toLowerCase()
+  const navigateTo = (e: any): void => {
+    const link: string = e.target.innerText.toLowerCase()
     
     if (link.length >= 1) {
       router.push(`/${link}`)    
@@ -63,7 +71,7 @@ const AppBarMenu = ({ heading, group, monthPicker, children, links }) => {
             MenuListProps={{
               'aria-labelledby': 'basic-button',
             }}>
-              {links.map(link => 
+              {links.map((link: any) => 
                 <MenuItem value={link} key={link}> {link} </MenuItem>
               )}
           </Menu>

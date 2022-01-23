@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 
 import axios from 'axios';
@@ -12,6 +12,14 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 import AppBarMenu from "../../components/AppBar";
+
+interface IProps {
+  data: {
+    currenyName: string,
+    id: string,
+    currencySymbol?: string
+  }
+}
 
 const Section = styled(Box)(() => ({
   height: '70vh',
@@ -32,16 +40,18 @@ const Field = styled(TextField)(() => ({
   height: '50px'
 }))
 
-const Calculator = ({data}) => {
-  const [firstCurrency, setFirstCurrency] = useState('CZK');
-  const [secondCurrency, setSecondCurrency] = useState('EUR');
-  const [value, setValue] = useState(0);
-  const [result, setResult] = useState(0);
+const Calculator: React.FC<IProps> = ({data}) => {
+  const [firstCurrency, setFirstCurrency] = useState<string>('CZK');
+  const [secondCurrency, setSecondCurrency] = useState<string>('EUR');
+  const [value, setValue] = useState<number>(0);
+  const [result, setResult] = useState<any>(0);
 
-  const links = ['transactions', 'account', 'overview']
-  const dataKeys = Object.keys(data)
+  const inputRef = useRef<HTMLDivElement>()
 
-  const currencies = dataKeys.filter((currency) =>
+  const links: string[] = ['transactions', 'account', 'overview']
+  const dataKeys: string[] = Object.keys(data)
+
+  const currencies: string[] = dataKeys.filter((currency: string) =>
     currency === 'CZK' ||
     currency === 'EUR' ||
     currency === 'DKK' ||
@@ -54,14 +64,20 @@ const Calculator = ({data}) => {
     currency === 'GBP'
   )
 
-  const convert = () => {
+  useEffect((): void => {
+    const input: any  = inputRef.current.children[0];
+    input.focus()
+    console.log(inputRef);
+  }, [])
+
+  const convert = (): void => {
     const currency = `${secondCurrency}_${firstCurrency}`
     axios.get(`https://free.currconv.com/api/v7/convert?q=${currency}&compact=ultra&apiKey=836d0b8433d05fb1ce7a`)
     .then(res => {
-      const {data} = res;
-      const currencyValue = Object.values(data)[0];
+      const {data}: any = res;
+      const currencyValue: any = Object.values(data)[0];
 
-      const convertedNumber = value / currencyValue;
+      const convertedNumber: any = value / currencyValue;
       
       setResult(convertedNumber.toFixed(2));
     }).catch(err => {
@@ -75,30 +91,29 @@ const Calculator = ({data}) => {
       <GridContainer>
         <Grid item xs={6} md={6}>
           <Box sx={{ border: '1px solid black', display: 'flex', padding: '25px'}}> 
-            <Field id="outlined-basic" label="value" variant="outlined" onChange={(e) => setValue(e.target.value)}/>
+            <input />
+            <Field id="outlined-basic" ref={inputRef} label="value" variant="outlined" onChange={(e: any) => setValue(e.target.value)}/>
           
             <Field
               select
-              labelId="demo-simple-select-label"
               id="demo-simple-select"
               label="from"
               value={firstCurrency}
               onChange={(e) => setFirstCurrency(e.target.value)}
             >
-              {currencies.map(currency => <MenuItem value={currency} key={currency}>{currency}</MenuItem>)}
+              {currencies.map((currency: string) => <MenuItem value={currency} key={currency}>{currency}</MenuItem>)}
             </Field>
           </Box>
 
           <Box sx={{ border: '1px solid black', display: 'flex', padding: '25px'}}> 
             <Field
               select
-              labelId="demo-simple-select-label"
               id="demo-simple-select"
               label="To"
               value={secondCurrency}
-              onChange={(e) => setSecondCurrency(e.target.value)}
+              onChange={(e: any) => setSecondCurrency(e.target.value)}
             >
-              {currencies.map(currency => <MenuItem value={currency} key={currency}>{currency}</MenuItem>)}
+              {currencies.map((currency: string) => <MenuItem value={currency} key={currency}>{currency}</MenuItem>)}
             </Field>
             <Button variant='outlined' onClick={convert} sx={{ width: '200px', height: '55px', margin: '10px'}}>
               submit

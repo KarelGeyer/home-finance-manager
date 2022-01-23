@@ -6,25 +6,28 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const EditAccount = ({ closeModal }) => {
-  const [currency, setCurrency] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+interface IProps {
+  closeModal: () => void
+}
 
-  const selectCurency = (event) => {
-    setCurrency(event.target.value);
+const EditAccount: React.FC<IProps> = ({ closeModal }) => {
+  const [currency, setCurrency] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+
+  const selectCurency = (e: any): void => {
+    setCurrency(e.target.value);
   };
 
-  const submitForm = (e) => {
-    console.log(e)
+  const submitForm = (e: any): void => {
     setLoading(true)
 
-    setTimeout(() => {
+    setTimeout((): void => {
       setLoading(false);
       setSuccess(!success);
     }, 3000)
 
-    setTimeout(() => {
+    setTimeout((): void => {
       closeModal();
     }, 4000)
   }

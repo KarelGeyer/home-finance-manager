@@ -11,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-import AccountInfo from "../../components/AccountInfo";
+import AccountInfo, {IProps as AccountInfoProps} from "../../components/AccountInfo";
 import AppBarMenu from "../../components/AppBar";
 import EditAccount from "../../components/EditAccount";
 
@@ -31,9 +31,9 @@ const GridContainer = styled(Grid)(() => ({
 }))
 
 
-const Account = () => {
-  const links = ['overview', 'transactions', 'calculator']
-  const user = [
+const Account: React.FC = () => {
+  const links: string[] = ['overview', 'transactions', 'calculator']
+  const user: {information: string, label: string}[] = [
     {
       information: 'Karel',
       label: 'Name'
@@ -64,9 +64,9 @@ const Account = () => {
     },
   ]
 
-  const [modalOpened, setModalOpened] = useState(false);
-  const openModal = () => setModalOpened(true);
-  const closeModal = () => setModalOpened(false);
+  const [modalOpened, setModalOpened] = useState<boolean>(false);
+  const openModal = (): void => setModalOpened(true);
+  const closeModal = (): void => setModalOpened(false);
 
   return (
     <Section sx={{ fontFamily: 'Montserrat' }}>
@@ -108,7 +108,7 @@ const Account = () => {
             My Account
           </Typography>
 
-          {user.map(information => (<AccountInfo label={information.label} information={information.information} key={information.label}/>))}
+          {user.map((information: AccountInfoProps, index: number) => (<AccountInfo label={information.label} information={information.information} key={index}/>))}
 
           <Modal
             open={modalOpened}

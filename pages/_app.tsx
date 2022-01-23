@@ -1,8 +1,10 @@
 import Head from 'next/head'
 import '../styles/globals.css'
 import MaxWidth from '../components/MaxWidth'
+import React from 'react'
+import type { AppProps } from 'next/app'
 
-function MyApp({ Component, pageProps }) {
+const MyApp: React.FC<AppProps> = ({ Component, pageProps }) =>  {
   return (
     <MaxWidth>
       <Component {...pageProps} />

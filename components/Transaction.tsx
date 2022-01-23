@@ -10,7 +10,15 @@ import CardActions from '@mui/material/CardActions';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-const Transaction = ({ name, user, price, tags }) => {
+export interface IProps {
+  name: string,
+  user: string,
+  price: string,
+  tags: string | string[],
+  key?: number
+}
+
+const Transaction: React.FC<IProps> = ({ name, user, price, tags }) => {
   return (
     <Card sx={{ width: 360, margin: '10px' }}>
       <CardContent sx={{ width: '100%', display: 'flex', padding: ' 8px 8px 0 8px' }}>

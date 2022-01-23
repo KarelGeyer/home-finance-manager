@@ -1,5 +1,16 @@
 import mongoose from 'mongoose';
 
+interface User {
+  name: string
+  surname: string
+  password: string
+  email: string
+  phoneNumber?: string
+  currency: string
+  accountID: string
+  teamID?: string
+}
+
 const User = new mongoose.Schema({
   name: {
     type: String,
@@ -34,9 +45,6 @@ const User = new mongoose.Schema({
   teamID: {
     type: String,
   },
-  image: {
-    type: String,
-  }
 });
 
-export default mongoose.model('User', User);
+export default mongoose.model<User>('User', User);
