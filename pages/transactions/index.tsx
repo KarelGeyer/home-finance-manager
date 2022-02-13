@@ -6,12 +6,34 @@ import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import Modal from '@mui/material/Modal';
+
+import CancelIcon from '@mui/icons-material/Cancel';
 
 import AppBarMenu from "../../components/AppBar";
 import LineGraph from "../../components/LineGraph";
 import Transaction, {IProps as TransactionProps} from "../../components/Transaction";
 
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { TRANSACTIONS_URL } from "../../assets/global";
+import EditTransaction from "../../components/EditTransaction";
+
+export interface IProps {
+  transactions: Transaction[]
+}
+
+export interface Transaction {
+    name: string,
+    person: string,
+    category: string,
+    sum: number,
+    currency: string,
+    month?: string,
+    isLoand?: boolean,
+    tags?: string | string[]
+    __v?: number
+    _id: string
+}
 
 const Section = styled(Box)(() => ({
   height: '70vh',
@@ -26,8 +48,12 @@ const GridContainer = styled(Grid)(() => ({
   width: '100%'
 }))
 
-const Transactions: React.FC = () => {
+const Transactions: React.FC<IProps> = ({transactions}) => {
   const [filterValue, setFilterValue] = useState<string>('Group');
+  const [modalOpened, setModalOpened] = useState<boolean>(false);
+
+  const openModal = (): void => setModalOpened(true);
+  const closeModal = (): void => setModalOpened(false);
 
   const links: string[] = ['overview', 'account', 'calculator']
 
@@ -35,25 +61,13 @@ const Transactions: React.FC = () => {
     setFilterValue(e.target.value)
   }
 
-  const fakeDates: string[] = ['1.1.', '5.1', '12.1', '15.1', '18.1', '26.1', '31.1']
-  const fakeSpendings: number[] = [1000, 6850, 1240, 18000, 512, 6914, 1105]
+  const formattedDatesFromTransactions: string[] = transactions.map((transaction: any) => {
+    const formatterdDateArr = transaction.date.split('-')
 
-  const TransactionFakeData: TransactionProps[] = [
-    {
-      name: 'Shopping food',
-      user: 'Karel Geyer',
-      price: '100 EUR',
-      tags: 'shopping',
-      key: 1
-    },
-    {
-      name: 'Shopping food',
-      user: 'Karel Geyer',
-      price: '100 EUR',
-      tags: 'shopping',
-      key: 2
-    }
-  ]
+    return `${formatterdDateArr[2]}.${formatterdDateArr[1]}`
+  })
+
+  const spendings: number[] = transactions.map((transaction: any) => transaction.sum)
 
   return (
     <Section sx={{ fontFamily: 'Montserrat' }}>
@@ -65,6 +79,7 @@ const Transactions: React.FC = () => {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2, borderRadius: '50px', padding: '4px 10px 4px 4px', border: '1px solid white' }}
+            onClick={openModal}
           >
             <AddCircleIcon fontSize='large'/>
             <Typography variant="subtitle1" component="div" sx={{ flexGrow: 1, fontFamily: 'Montserrat', margin: '2px' }}>
@@ -86,21 +101,22 @@ const Transactions: React.FC = () => {
         </Select>
       </AppBarMenu>
 
-      <GridContainer container xs={12} md={12} sx={{ padding: '20px' }}>
+      <GridContainer container sx={{ padding: '20px' }}>
 
-        <Grid item xs={12} md={5} sx={{ textAlign: 'center', paddingTop: '20px', maxHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems:'center', overflow: 'scrollX' }}>
+        <Grid item xs={12} md={5} sx={{ textAlign: 'center', paddingTop: '30px', maxHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems:'center', overflow: 'scrollX' }}>
           <Typography variant="h4" component="div" sx={{ fontFamily: 'Montserrat', fontWeight: 600, marginBottom: '25px' }}>
             Transactions
           </Typography>
-          <Box>
+          <Box sx={{ overflow: 'scroll', overflowX: 'hidden'}}>
             
-            {TransactionFakeData.map((transaction: TransactionProps) => (
+            {transactions && transactions.map((transaction: any) => (
               <Transaction 
                 name={transaction.name} 
-                user={transaction.user} 
-                price={transaction.price} 
-                tags={transaction.tags} 
-                key={transaction.key}/>
+                user={transaction.person} 
+                price={transaction.sum} 
+                tags={transaction.tags}
+                id={transaction._id}  
+                key={transaction._id}/>
             ))}
 
           </Box>
@@ -111,13 +127,50 @@ const Transactions: React.FC = () => {
             Spendings By Day
           </Typography>
           <Box sx={{ height: '400px' }}>
-            <LineGraph labels={fakeDates} data={fakeSpendings} />
+            <LineGraph labels={formattedDatesFromTransactions} data={spendings} />
           </Box> 
         </Grid>
        </GridContainer>
 
+       <Modal
+            open={modalOpened}
+            onClose={closeModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box component='form' sx={{ backgroundColor: 'white', width: '50%', height: '50vh', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', borderRadius: '10px', padding: '10px 35px'}}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between'}}> 
+                <Typography variant="h5" sx={{ fontFamily: 'Montserrat', margin: '0 0 0px 0', padding: '12px' }}>
+                  Edit Account
+                </Typography>
+                <IconButton
+                  onClick={closeModal} 
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{margin: 0, height: '50px', width: '50'}}
+                >
+                  <CancelIcon/>
+                </IconButton>
+              </Box>
+              <EditTransaction closeModal={closeModal} />
+            </Box>
+          </Modal>
+
     </Section>
   )
+}
+
+export const getServerSideProps = async ():Promise<any> => {
+  const res: Response = await fetch(TRANSACTIONS_URL);
+  const transactions: IProps = await res.json()
+
+  return {
+    props: {
+      transactions
+    }
+  }
 }
 
 export default Transactions

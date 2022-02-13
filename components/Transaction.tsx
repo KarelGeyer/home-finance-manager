@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -9,16 +11,28 @@ import CardActions from '@mui/material/CardActions';
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { TRANSACTIONS_URL } from '../assets/global';
 
 export interface IProps {
   name: string,
   user: string,
   price: string,
   tags: string | string[],
-  key?: number
+  id: string
 }
 
-const Transaction: React.FC<IProps> = ({ name, user, price, tags }) => {
+const Transaction: React.FC<IProps> = ({ name, user, price, tags, id }) => {
+
+  const handleDelete = ():void => {
+    axios.delete(TRANSACTIONS_URL, {
+      data: {
+        _id: id
+      }
+    })
+    .then((res: any) => console.log(res))
+    .catch((err: any) => console.log(err))
+  };
+
   return (
     <Card sx={{ width: 360, margin: '10px' }}>
       <CardContent sx={{ width: '100%', display: 'flex', padding: ' 8px 8px 0 8px' }}>
@@ -58,6 +72,7 @@ const Transaction: React.FC<IProps> = ({ name, user, price, tags }) => {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={handleDelete}
           >
             <DeleteIcon />
           </IconButton>

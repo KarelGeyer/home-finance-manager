@@ -1,0 +1,1 @@
+export const TRANSACTIONS_URL: string = 'http://localhost:3000/api/transactions';

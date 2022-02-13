@@ -6,6 +6,7 @@ interface Transaction {
   category: string,
   sum: number,
   currency: string,
+  date: string,
   month?: string,
   isLoand?: boolean,
   tags?: string | string[]
@@ -34,6 +35,9 @@ const Transaction = new mongoose.Schema({
   currency: {
     type: String,
     required: true,
+  },
+  date: {
+    type: String,
   },
   month: {
     type: String,

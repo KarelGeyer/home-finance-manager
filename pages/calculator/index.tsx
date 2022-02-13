@@ -129,7 +129,7 @@ const Calculator: React.FC<IProps> = ({data}) => {
   )
 }
 
-export const getStaticProps = async () => {
+export const getServerSideProps = async () => {
   const res = await fetch('https://free.currconv.com/api/v7/currencies?apiKey=836d0b8433d05fb1ce7a');
   const data = await res.json()
 
