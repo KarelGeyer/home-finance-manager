@@ -1,78 +1,71 @@
 import { useState } from "react";
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Grid from '@mui/material/Grid';
-import Modal from '@mui/material/Modal';
-import Image from 'next/image';
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
+import Modal from "@mui/material/Modal";
+import Image from "next/image";
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import CancelIcon from '@mui/icons-material/Cancel';
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import CancelIcon from "@mui/icons-material/Cancel";
 
-import AccountInfo, {IProps as AccountInfoProps} from "../../components/AccountInfo";
+import {
+  GridContainer,
+  ImageBox,
+  ButtonWithIcon,
+} from "../../styles/pages/account";
+import { Section, MainHeading, Paragraph, FormBox } from "../../styles/global";
+
+import AccountInfo, {
+  IProps as AccountInfoProps,
+} from "../../components/AccountInfo";
 import AppBarMenu from "../../components/AppBar";
 import EditAccount from "../../components/EditAccount";
 
-import img from '../../public/witcher.jpg'
-
-const Section = styled(Box)(() => ({
-  height: '70vh',
-  width: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  flexDirection: 'column',
-}))
-
-const GridContainer = styled(Grid)(() => ({
-  backgroundColor: 'rgb(255, 255, 255, 0.9)',
-  width: '100%'
-}))
-
+import img from "../../public/witcher.jpg";
 
 const Account: React.FC = () => {
-  const links: string[] = ['overview', 'transactions', 'calculator']
-  const user: {information: string, label: string}[] = [
+  const links: string[] = ["overview", "transactions", "calculator"];
+  const user: { information: string; label: string }[] = [
     {
-      information: 'Karel',
-      label: 'Name'
+      information: "Karel",
+      label: "Name",
     },
     {
-      information: 'Geyer',
-      label: 'Surname'
+      information: "Geyer",
+      label: "Surname",
     },
     {
-      information: 'karelgeyer@gmail.com',
-      label: 'Email'
+      information: "karelgeyer@gmail.com",
+      label: "Email",
     },
     {
-      information: '603 429 067',
-      label: 'Phone Number'
+      information: "603 429 067",
+      label: "Phone Number",
     },
     {
-      information: 'EUR',
-      label: 'Default Currency'
+      information: "EUR",
+      label: "Default Currency",
     },
     {
-      information: 'Account ID',
-      label: 'HjsR158Sdd6'
+      information: "HjsR158Sdd6",
+      label: "Account ID",
     },
     {
-      information: 'Team ID',
-      label: 'kgln603781'
+      information: "kgln603781",
+      label: "Team ID",
     },
-  ]
+  ];
 
   const [modalOpened, setModalOpened] = useState<boolean>(false);
   const openModal = (): void => setModalOpened(true);
   const closeModal = (): void => setModalOpened(false);
 
   return (
-    <Section sx={{ fontFamily: 'Montserrat' }}>
-      <AppBarMenu heading='Account'  links={links}>
+    <Section sx={{ fontFamily: "Montserrat" }}>
+      <AppBarMenu heading="Account" links={links}>
         <IconButton
-          onClick={openModal} 
+          onClick={openModal}
           size="large"
           edge="start"
           color="inherit"
@@ -90,58 +83,54 @@ const Account: React.FC = () => {
         >
           <DeleteIcon />
         </IconButton>
-      </AppBarMenu>  
-      
-      <GridContainer container xs={12} md={12} sx={{ padding: '20px' }}>
+      </AppBarMenu>
+
+      <GridContainer container xs={12} md={12} sx={{ padding: "20px" }}>
         <Grid item xs={12} md={6}>
-          <Box sx={{ border: '1px solid black', margin: '50px 0 0 250px', width: '350px', height: '350px', borderRadius: '100%', overflow: 'hidden', position: 'relative' }}>
-            <Image src={img} alt='image' layout='fill' objectFit='cover' />
-          </Box>
+          <ImageBox>
+            <Image src={img} alt="image" layout="fill" objectFit="cover" />
+          </ImageBox>
         </Grid>
         <Grid item xs={12} md={4}>
-        <Box
-          component="div"
-          sx={{
-            '& .MuiTextField-root': { m: 1, width: '25ch', },
-        }}>
-          <Typography variant="h5" sx={{ fontFamily: 'Montserrat',  padding: '0 30px', marginBottom: '50px', objectFit: 'cover' }}>
-            My Account
-          </Typography>
+          <Box component="div">
+            <MainHeading variant="h5">My Account</MainHeading>
 
-          {user.map((information: AccountInfoProps, index: number) => (<AccountInfo label={information.label} information={information.information} key={index}/>))}
+            {user.map((information: AccountInfoProps, index: number) => (
+              <AccountInfo
+                label={information.label}
+                information={information.information}
+                key={index}
+              />
+            ))}
 
-          <Modal
-            open={modalOpened}
-            onClose={closeModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box component='form' sx={{ backgroundColor: 'white', width: '50%', height: '50vh', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', borderRadius: '10px', padding: '10px 35px'}}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between'}}> 
-                <Typography variant="h5" sx={{ fontFamily: 'Montserrat', margin: '0 0 0px 0', padding: '12px' }}>
-                  Edit Account
-                </Typography>
-                <IconButton
-                  onClick={closeModal} 
-                  size="large"
-                  edge="start"
-                  color="inherit"
-                  aria-label="menu"
-                  sx={{margin: 0, height: '50px', width: '50'}}
-                >
-                  <CancelIcon/>
-                </IconButton>
-              </Box>
-            
-              <EditAccount closeModal={closeModal} />
-            </Box>
-          </Modal>
-        </Box>
+            <Modal
+              open={modalOpened}
+              onClose={closeModal}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <FormBox component="form">
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Paragraph variant="h5">Edit Account</Paragraph>
+                  <ButtonWithIcon
+                    onClick={closeModal}
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                  >
+                    <CancelIcon />
+                  </ButtonWithIcon>
+                </Box>
+
+                <EditAccount closeModal={closeModal} />
+              </FormBox>
+            </Modal>
+          </Box>
         </Grid>
       </GridContainer>
-
     </Section>
-  )
-}
+  );
+};
 
-export default Account
+export default Account;

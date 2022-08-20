@@ -1,17 +1,20 @@
-import { useState } from 'react';
-import Box from '@mui/material/Box';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
+import { useState } from "react";
+import MenuItem from "@mui/material/MenuItem";
+
+import {
+  Form,
+  FormInput,
+  FormSelect,
+  FormProgressIndicator,
+  FormButton,
+} from "../styles/global";
 
 interface IProps {
-  closeModal: () => void
+  closeModal: () => void;
 }
 
 const EditAccount: React.FC<IProps> = ({ closeModal }) => {
-  const [currency, setCurrency] = useState<string>('');
+  const [currency, setCurrency] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
 
@@ -20,105 +23,61 @@ const EditAccount: React.FC<IProps> = ({ closeModal }) => {
   };
 
   const submitForm = (e: any): void => {
-    setLoading(true)
+    setLoading(true);
 
     setTimeout((): void => {
       setLoading(false);
       setSuccess(!success);
-    }, 3000)
+    }, 3000);
 
     setTimeout((): void => {
       closeModal();
-    }, 4000)
-  }
+    }, 4000);
+  };
 
   return (
-    <Box component='form' sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between'}}> 
-      <TextField
-        id="outlined-name-input"
-        label="Name"
-        type="text"
-        sx={{ margin: '10px 0', width: '45%', fontFamily: 'Montserrat'}}
-      />
-      <TextField
-        id="outlined-surname-input"
-        label="Surname"
-        type="text"
-        sx={{ margin: '10px 0', width: '45%', fontFamily: 'Montserrat'}}
-      />
-      <TextField
-        id="outlined-email-input"
-        label="Email"
-        type="email"
-        sx={{ margin: '10px 0', width: '45%', fontFamily: 'Montserrat'}}
-      />
-      <TextField
+    <Form component="form">
+      <FormInput id="outlined-name-input" label="Name" type="text" />
+      <FormInput id="outlined-surname-input" label="Surname" type="text" />
+      <FormInput id="outlined-email-input" label="Email" type="email" />
+      <FormInput
         id="outlined-phoneNumber-input"
         label="Phone number"
         type="tel"
-        sx={{ margin: '10px 0', width: '45%', fontFamily: 'Montserrat'}}
       />
-      <TextField
+      <FormInput
         id="outlined-password-input"
         label="Password"
         type="password"
         autoComplete="current-password"
-        sx={{ margin: '10px 0', width: '45%', fontFamily: 'Montserrat'}}
       />
-      <TextField
+      <FormInput
         id="outlined-newPassword-input"
         label="New Password"
         type="password"
-        sx={{ margin: '10px 0', width: '45%', fontFamily: 'Montserrat'}}
       />
 
-      <Select
+      <FormSelect
         labelId="simple-select-label"
         id="simple-select"
         value={currency}
         defaultValue="Select Currency"
         onChange={selectCurency}
-        sx={{ margin: '10px 0', width: '45%', fontFamily: 'Montserrat'}}
       >
         <MenuItem value={1}>Select Currency</MenuItem>
         <MenuItem value={10}>Ten</MenuItem>
         <MenuItem value={20}>Twenty</MenuItem>
         <MenuItem value={30}>Thirty</MenuItem>
-      </Select>
+      </FormSelect>
 
-      <TextField
-        id="outlined-teamId-input"
-        label="Team ID"
-        type="text"
-        sx={{ margin: '10px 0', width: '45%', fontFamily: 'Montserrat'}}
-      />
+      <FormInput id="outlined-teamId-input" label="Team ID" type="text" />
 
-      <Button 
-        variant="contained"
-        sx={{
-          margin: '20px auto', width: '300px', height: '60px', backgroundColor: 'lightgrey', fontWeight: 600, fontFamily: 'Montserrat'
-        }}
-        onClick={submitForm}
-      >
-        {!loading &&
-          'Submit'
-        }
-      </Button>
-      {loading &&
-        <CircularProgress
-          size={40}
-          sx={{
-            color: 'blue',
-            position: 'absolute',
-            top: '88%',
-            left: '49%',
-            marginTop: '-12px',
-            marginLeft: '-12px',
-          }}
-        />
-      }
-    </Box>
-  )
-}
+      <FormButton variant="contained" onClick={submitForm}>
+        {!loading && "Submit"}
+      </FormButton>
+      {loading && <FormProgressIndicator size={40} />}
+    </Form>
+  );
+};
 
-export default EditAccount
+export default EditAccount;

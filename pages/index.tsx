@@ -1,128 +1,103 @@
 import { useRouter } from "next/dist/client/router";
-import styles from '../styles/Home.module.css';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import PieChartIcon from '@mui/icons-material/PieChart';
-import CalculateIcon from '@mui/icons-material/Calculate';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { useQuery, useMutation, gql } from "@apollo/client";
+
+import styles from "../styles/Home.module.css";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import PieChartIcon from "@mui/icons-material/PieChart";
+import CalculateIcon from "@mui/icons-material/Calculate";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+
+import {
+  MainBox,
+  GridContainer,
+  GridItem,
+  PieGraphIcon,
+  AccountIcon,
+  AddIcon,
+} from "../styles/main";
+import { Section, Heading, FormBox } from "../styles/global";
+
+const GET_USERS = gql`
+  {
+    users {
+      name
+      surname
+      password
+      email
+      phoneNumber
+    }
+  }
+`;
+
+const CREATE_USER = gql`
+  mutation CreateUser($user: UserInput) {
+    createUser(user: $user) {
+      name
+      surname
+    }
+  }
+`;
 
 const Home: React.FC = () => {
-  const router = useRouter()
+  const router = useRouter();
+  const [createUser] = useMutation(CREATE_USER);
+  const testUser = {
+    name: "Karel",
+    email: "karelgeyer@testing.cz",
+    password: "Karlkani123",
+    phoneNumber: 603429067,
+    surname: "Geyer",
+  };
+
+  const { loading, error, data } = useQuery(GET_USERS);
+
+  console.log(data);
+
+  // useEffect(
+  //   () =>
+  //     // @ts-ignore
+  //     createUser({
+  //       variables: { user: testUser },
+  //     }),
+  //   []
+  // );
 
   const navigate = (e: any) => {
-    const {target} = e
-    const link: string = target.innerText?.toLowerCase()
-    
-    router.push(`/${link}`)
-  }
+    const { target } = e;
+    const link: string = target.innerText?.toLowerCase();
+
+    router.push(`/${link}`);
+  };
 
   return (
-    <div className={styles.container}>
-      <Box 
-        sx={{ 
-          flexGrow: 1, 
-          height: '70vh', 
-          display:'flex', 
-          justifyContent:"center" 
-        }}>
-        <Grid 
-          justifyContent="center" 
-          container 
-          spacing={0} 
-          sx={{ 
-            height: '70vh',
-            width: '100%',
-          }}>
-          <Grid 
-            item 
-            xs={5} 
-            sx={{ 
-              backgroundColor: 'rgb(0,0,0,0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: 'column',
-              m: 2 
-            }}
-            className={styles.card}
-            onClick={(e) => navigate(e)}>
-            <PieChartIcon 
-              sx={{
-                width: '120px', height: '120px'
-              }}
-              color='primary' />
-            <Typography variant="h3" color="primary" sx={{ m: 2, fontFamily: 'Montserrat', fontWeight: 600 }}>
+    <Section>
+      <MainBox>
+        <GridContainer container spacing={0}>
+          <GridItem item xs={5} onClick={(e) => navigate(e)}>
+            <PieGraphIcon color="primary" />
+            <Heading variant="h3" color="primary">
               OVERVIEW
-            </Typography>
-          </Grid>
-          <Grid 
-            item 
-            xs={5} 
-            sx={{ 
-              backgroundColor: 'rgb(0,0,0,0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: 'column',
-              m: 2 
-            }}
-            className={styles.card}
-            onClick={(e) => navigate(e)}>
-            <AccountCircleIcon 
-              sx={{
-                width: '120px', height: '120px'
-              }}
-              color='primary' />
-            <Typography variant="h3" color="primary" sx={{ m: 2, fontFamily: 'Montserrat', fontWeight: 600 }}>
+            </Heading>
+          </GridItem>
+          <GridItem item xs={5} onClick={(e) => navigate(e)}>
+            <AccountIcon color="primary" />
+            <Heading variant="h3" color="primary">
               ACCOUNT
-            </Typography>
-          </Grid>
-          <Grid 
-            item 
-            xs={5} 
-            sx={{ 
-              backgroundColor: 'rgb(0,0,0,0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: 'column',
-              m: 2 
-            }}
-            className={styles.card}
-            onClick={(e) => navigate(e)}>
-            <AddCircleIcon 
-              sx={{
-                width: '120px', height: '120px'
-              }}
-              color='primary' />
-            <Typography variant="h3" color="primary" sx={{ m: 2, fontFamily: 'Montserrat', fontWeight: 600 }}>
+            </Heading>
+          </GridItem>
+          <GridItem item xs={5} onClick={(e) => navigate(e)}>
+            <AddIcon color="primary" />
+            <Heading variant="h3" color="primary">
               TRANSACTIONS
-            </Typography>
-          </Grid>
-          <Grid 
-            item 
-            xs={5} 
-            sx={{ 
-              backgroundColor: 'rgb(0,0,0,0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: 'column',
-              m: 2 
-            }}
-            className={styles.card}
-            onClick={(e) => navigate(e)}>
-            <CalculateIcon 
-              sx={{
-                width: '120px', height: '120px'
-              }}
-              color='primary' />
-            <Typography variant="h3" color="primary" sx={{ m: 2, fontFamily: 'Montserrat', fontWeight: 600 }}>
-              CALCULATOR
-            </Typography>
-          </Grid>
-        </Grid>
-      </Box>
-    </div>
-  )
-}
+            </Heading>
+          </GridItem>
+        </GridContainer>
+      </MainBox>
+    </Section>
+  );
+};
 
-export default Home
+export default Home;

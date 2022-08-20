@@ -1,47 +1,50 @@
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import EuroIcon from '@mui/icons-material/Euro';
+import Divider from "@mui/material/Divider";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import EuroIcon from "@mui/icons-material/Euro";
+import { Paragraph } from "../styles/global";
+import { Usercard } from "../styles/components/userCard";
 
 export interface IProps {
   user: {
-    name: string,
-    amount: string
-  }
+    name: string;
+    amount: string;
+  };
 }
 
 const UserCard: React.FC<IProps> = ({ user }) => {
-  const {name, amount} = user
+  const { name, amount } = user;
 
   return (
     <>
-      <Box sx={{ display: 'flex', padding: '5px 15px', minWidth: '200px' }}>
+      <Usercard>
         <AccountCircleIcon
           sx={{
-            width: '30px', height: '30px'
+            width: "30px",
+            height: "30px",
           }}
-          color='primary' />
-        <Typography variant="subtitle1" component="div" sx={{ fontFamily: 'Montserrat', color: 'blue', margin: '0 15px' }}>
+          color="primary"
+        />
+        <Paragraph variant="subtitle1" sx={{ color: "blue" }}>
           {name}
-        </Typography>
-      </Box>
+        </Paragraph>
+      </Usercard>
 
-      <Box sx={{ display: 'flex', padding: '5px 15px', minWidth: '200px' }}>
+      <Usercard>
         <EuroIcon
           sx={{
-            width: '30px', height: '30px'
+            width: "30px",
+            height: "30px",
           }}
-          color='primary' />
-        <Typography variant="subtitle1" component="div" sx={{ fontFamily: 'Montserrat', color: 'blue', margin: '0 15px' }}>
+          color="primary"
+        />
+        <Paragraph variant="subtitle1" sx={{ color: "blue" }}>
           {amount}
-        </Typography>
-      </Box>
+        </Paragraph>
+      </Usercard>
 
-      <Divider variant="middle" sx={{ minWidth: '180px' }} />
+      <Divider variant="middle" sx={{ minWidth: "180px" }} />
     </>
-  )
-}
+  );
+};
 
-export default UserCard
+export default UserCard;

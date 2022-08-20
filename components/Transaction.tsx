@@ -1,61 +1,52 @@
-import axios from 'axios';
+import axios from "axios";
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import Divider from '@mui/material/Divider';
-import Chip from '@mui/material/Chip';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Chip from "@mui/material/Chip";
 
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { TRANSACTIONS_URL } from '../assets/global';
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { TRANSACTIONS_URL } from "../assets/global";
+import {
+  TransactionActionsBox,
+  TransactionCard,
+  TransactionContentBox,
+  TransactionDivider,
+} from "../styles/components/transaction";
+import { Paragraph } from "../styles/global";
 
 export interface IProps {
-  name: string,
-  user: string,
-  price: string,
-  tags: string | string[],
-  id: string
+  name: string;
+  user: string;
+  price: string;
+  tags: string | string[];
+  id: string;
 }
 
 const Transaction: React.FC<IProps> = ({ name, user, price, tags, id }) => {
-
-  const handleDelete = ():void => {
-    axios.delete(TRANSACTIONS_URL, {
-      data: {
-        _id: id
-      }
-    })
-    .then((res: any) => console.log(res))
-    .catch((err: any) => console.log(err))
+  const handleDelete = (): void => {
+    axios
+      .delete(TRANSACTIONS_URL, {
+        data: {
+          _id: id,
+        },
+      })
+      .then((res: any) => console.log(res))
+      .catch((err: any) => console.log(err));
   };
 
   return (
-    <Card sx={{ width: 360, margin: '10px' }}>
-      <CardContent sx={{ width: '100%', display: 'flex', padding: ' 8px 8px 0 8px' }}>
-        <Typography variant="subtitle1" component="div" sx={{ fontFamily: 'Montserrat' }}>
-          {name}
-        </Typography>
-
-        <Divider variant='inset' orientation="vertical"  sx={{ height: '30px', margin: '0 5px'}}/>
-
-        <Typography variant="subtitle1" component="div" sx={{ fontFamily: 'Montserrat'}}>
-          {user}
-        </Typography>
-        
-        <Divider variant='inset' orientation="vertical"  sx={{ height: '30px', margin: '0 5px'}}/>
-
-        <Typography variant="subtitle1" component="div" sx={{ fontFamily: 'Montserrat' }}>
-          {price}
-        </Typography>
-      </CardContent>
-      <CardActions  sx={{ justifyContent: 'space-between', paddingRight: '15px' }}>
+    <TransactionCard>
+      <TransactionContentBox>
+        <Paragraph variant="subtitle1">{name}</Paragraph>
+        <TransactionDivider variant="inset" orientation="vertical" />
+        <Paragraph variant="subtitle1">{user}</Paragraph>
+        <TransactionDivider variant="inset" orientation="vertical" />
+        <Paragraph variant="subtitle1">{price}</Paragraph>
+      </TransactionContentBox>
+      <TransactionActionsBox>
         <Chip label={tags} color="primary" />
         <Box>
-
           <IconButton
             size="large"
             edge="start"
@@ -65,7 +56,6 @@ const Transaction: React.FC<IProps> = ({ name, user, price, tags, id }) => {
           >
             <EditIcon />
           </IconButton>
-          
           <IconButton
             size="large"
             edge="start"
@@ -76,11 +66,10 @@ const Transaction: React.FC<IProps> = ({ name, user, price, tags, id }) => {
           >
             <DeleteIcon />
           </IconButton>
-
         </Box>
-      </CardActions>
-    </Card>
-  )
-}
+      </TransactionActionsBox>
+    </TransactionCard>
+  );
+};
 
-export default Transaction
+export default Transaction;
