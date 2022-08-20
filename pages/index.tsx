@@ -1,15 +1,6 @@
 import { useRouter } from "next/dist/client/router";
 import { useQuery, useMutation, gql } from "@apollo/client";
 
-import styles from "../styles/Home.module.css";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import PieChartIcon from "@mui/icons-material/PieChart";
-import CalculateIcon from "@mui/icons-material/Calculate";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-
 import {
   MainBox,
   GridContainer,
@@ -18,7 +9,7 @@ import {
   AccountIcon,
   AddIcon,
 } from "../styles/main";
-import { Section, Heading, FormBox } from "../styles/global";
+import { Section, Heading } from "../styles/global";
 
 const GET_USERS = gql`
   {

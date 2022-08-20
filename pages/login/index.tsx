@@ -1,7 +1,7 @@
 import React from "react";
 import { NextRouter, useRouter } from "next/dist/client/router";
-import Typography from "@mui/material/Typography";
 
+import Typography from "@mui/material/Typography";
 import {
   Section,
   Card,

@@ -1,6 +1,7 @@
 import Divider from "@mui/material/Divider";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EuroIcon from "@mui/icons-material/Euro";
+
 import { Paragraph } from "../styles/global";
 import { Usercard } from "../styles/components/userCard";
 

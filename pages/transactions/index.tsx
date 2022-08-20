@@ -1,16 +1,18 @@
 import { useState } from "react";
+
+import AppBarMenu from "../../components/AppBar";
+import LineGraph from "../../components/LineGraph";
+import EditTransaction from "../../components/EditTransaction";
+import Transaction, {
+  IProps as TransactionProps,
+} from "../../components/Transaction";
+
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
-
 import CancelIcon from "@mui/icons-material/Cancel";
-
-import AppBarMenu from "../../components/AppBar";
-import LineGraph from "../../components/LineGraph";
-import Transaction, {
-  IProps as TransactionProps,
-} from "../../components/Transaction";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 import {
   GridContainer,
@@ -21,9 +23,7 @@ import {
 } from "../../styles/pages/transactions";
 import { Section, MainHeading, FormBox } from "../../styles/global";
 
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { TRANSACTIONS_URL } from "../../assets/global";
-import EditTransaction from "../../components/EditTransaction";
 
 export interface IProps {
   transactions: Transaction[];

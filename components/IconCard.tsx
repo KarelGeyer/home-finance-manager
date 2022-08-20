@@ -10,6 +10,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import CoffeeMakerIcon from "@mui/icons-material/CoffeeMaker";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
+
 import { IconsWrapper } from "../styles/components/iconCard";
 import { Paragraph } from "../styles/global";
 
