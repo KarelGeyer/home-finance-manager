@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
@@ -23,39 +25,29 @@ import AppBarMenu from "../../components/AppBar";
 import EditAccount from "../../components/EditAccount";
 
 import img from "../../public/witcher.jpg";
+import { UserState } from "../../state/reducers/user";
 
 const Account: React.FC = () => {
   const links: string[] = ["overview", "transactions", "calculator"];
-  const user: { information: string; label: string }[] = [
-    {
-      information: "Karel",
-      label: "Name",
-    },
-    {
-      information: "Geyer",
-      label: "Surname",
-    },
-    {
-      information: "karelgeyer@gmail.com",
-      label: "Email",
-    },
-    {
-      information: "603 429 067",
-      label: "Phone Number",
-    },
-    {
-      information: "EUR",
-      label: "Default Currency",
-    },
-    {
-      information: "HjsR158Sdd6",
-      label: "Account ID",
-    },
-    {
-      information: "kgln603781",
-      label: "Team ID",
-    },
+  //@ts-ignore
+  const { userState } = useSelector(
+    (state: { userState: UserState }) => state.userState
+  );
+  const labels = [
+    "Name",
+    "Surname",
+    "Email",
+    "Phone Number",
+    "Default Currency",
+    "Account ID",
+    "Team ID",
   ];
+  const userInfo = labels.map((label: string | number, index: number) => {
+    return {
+      information: Object?.values(userState)[index],
+      label,
+    };
+  });
 
   const [modalOpened, setModalOpened] = useState<boolean>(false);
   const openModal = (): void => setModalOpened(true);
@@ -85,7 +77,7 @@ const Account: React.FC = () => {
         </IconButton>
       </AppBarMenu>
 
-      <GridContainer container xs={12} md={12} sx={{ padding: "20px" }}>
+      <GridContainer container sx={{ padding: "20px" }}>
         <Grid item xs={12} md={6}>
           <ImageBox>
             <Image src={img} alt="image" layout="fill" objectFit="cover" />
@@ -95,7 +87,7 @@ const Account: React.FC = () => {
           <Box component="div">
             <MainHeading variant="h5">My Account</MainHeading>
 
-            {user.map((information: AccountInfoProps, index: number) => (
+            {userInfo?.map((information: AccountInfoProps, index: number) => (
               <AccountInfo
                 label={information.label}
                 information={information.information}
