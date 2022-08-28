@@ -42,10 +42,6 @@ const AppBarMenu: React.FC<IProps> = ({
     }
   };
 
-  const closeMenu = (): void => {
-    setAnchorEl(null);
-  };
-
   const navigateTo = (e: any): void => {
     const link: string = e.target.innerText.toLowerCase();
 
@@ -58,19 +54,18 @@ const AppBarMenu: React.FC<IProps> = ({
     <LineBar position="static" color="secondary">
       <Toolbar>
         <IconButton
+          onClick={toggleMenu}
           size="large"
           edge="start"
           color="inherit"
           aria-label="menu"
-          onClick={toggleMenu}
         >
           <MenuIcon />
           <Menu
             id="basic-menu"
             anchorEl={anchorEl}
-            open={open}
-            onClose={closeMenu}
             onClick={navigateTo}
+            open={open}
             MenuListProps={{
               "aria-labelledby": "basic-button",
             }}
