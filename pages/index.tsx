@@ -1,6 +1,5 @@
 import { useRouter } from "next/dist/client/router";
 import { useQuery, useMutation, gql } from "@apollo/client";
-
 import {
   MainBox,
   GridContainer,
@@ -10,51 +9,64 @@ import {
   AddIcon,
 } from "../styles/main";
 import { Section, Heading } from "../styles/global";
-
-const GET_USERS = gql`
-  {
-    users {
-      name
-      surname
-      password
-      email
-      phoneNumber
-    }
-  }
-`;
-
-const CREATE_USER = gql`
-  mutation CreateUser($user: UserInput) {
-    createUser(user: $user) {
-      name
-      surname
-    }
-  }
-`;
+import { useDispatch, useSelector } from "react-redux";
+import { useContext, useEffect } from "react";
+import { UserSearchContext } from "../state/context/userContext";
+import { GET_USER, GET_TEAM, GET_TRANSACTIONS } from "../graphql";
+import { setUser, setTeam, setTransactions } from "../state/reducers";
 
 const Home: React.FC = () => {
   const router = useRouter();
-  const [createUser] = useMutation(CREATE_USER);
-  const testUser = {
-    name: "Karel",
-    email: "karelgeyer@testing.cz",
-    password: "Karlkani123",
-    phoneNumber: 603429067,
-    surname: "Geyer",
-  };
+  const { userSearch } = useContext(UserSearchContext);
+  const dispatch = useDispatch();
 
-  const { loading, error, data } = useQuery(GET_USERS);
+  const {
+    loading: isFetchingUser,
+    error: userError,
+    data: userData,
+    refetch: userRefetch,
+  } = useQuery(GET_USER, {
+    variables: {
+      email: userSearch,
+    },
+  });
 
-  console.log(data);
+  const {
+    loading: isFetchingTeamInfo,
+    error: teamError,
+    data: teamData,
+    refetch: teamRefetch,
+  } = useQuery(GET_TEAM, {
+    variables: {
+      email: userSearch,
+    },
+  });
 
-  // useEffect(
-  //   () =>
-  //     // @ts-ignore
-  //     createUser({
-  //       variables: { user: testUser },
-  //     }),
-  //   []
-  // );
+  const {
+    loading: isFetchingTransactions,
+    error: transactionsError,
+    data: transactionsData,
+    refetch: transactionsRefetch,
+  } = useQuery(GET_TRANSACTIONS, {
+    variables: {
+      email: userSearch,
+    },
+  });
+
+  useEffect(() => {
+    userRefetch();
+    teamRefetch();
+    transactionsRefetch();
+
+    if (!isFetchingUser && !isFetchingTeamInfo && !isFetchingTransactions) {
+      dispatch(setUser(userData));
+      dispatch(setTeam(teamData));
+      dispatch(setTransactions(transactionsData));
+
+      if (window)
+        localStorage.setItem("ref_sh_tkn", userData.user.refreshToken);
+    }
+  }, [isFetchingUser, isFetchingTeamInfo, isFetchingTransactions]);
 
   const navigate = (e: any) => {
     const { target } = e;
