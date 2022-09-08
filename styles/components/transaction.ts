@@ -5,7 +5,7 @@ import Divider from "@mui/material/Divider";
 import CardActions from "@mui/material/CardActions";
 
 export const TransactionCard = styled(Card)(() => ({
-  width: 360,
+  width: 400,
   margin: "10px",
 }));
 
@@ -17,7 +17,7 @@ export const TransactionContentBox = styled(CardContent)(() => ({
 
 export const TransactionActionsBox = styled(CardActions)(() => ({
   justifyContent: "space-between",
-  paddingRight: "15px",
+  padding: "5px",
 }));
 
 export const TransactionDivider = styled(Divider)(() => ({
