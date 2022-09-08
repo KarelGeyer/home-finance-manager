@@ -1,17 +1,11 @@
-import { setTeam, TeamState } from "./team";
-import { setUser, UserState } from "./user";
-import { setTransactions, TransactionsState } from "./transactions";
+import {
+  setEmail,
+  setDate,
+  setPersonFilter,
+  setSortFilter,
+  BaseDataState,
+} from "./baseData";
 
-export {
-  // Reducers
-  setTeam,
-  setUser,
-  setTransactions,
-};
+export { setDate, setEmail, setPersonFilter, setSortFilter };
 
-export type {
-  // Types
-  UserState,
-  TeamState,
-  TransactionsState,
-};
+export type { BaseDataState };
