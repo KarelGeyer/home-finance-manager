@@ -11,6 +11,10 @@ export const GET_TRANSACTIONS = gql`
         date
         isLoan
         personId
+        person {
+          name
+          surname
+        }
         id
       }
       team {
@@ -22,6 +26,10 @@ export const GET_TRANSACTIONS = gql`
           date
           isLoan
           personId
+          person {
+            name
+            surname
+          }
           id
         }
       }
