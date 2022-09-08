@@ -1,5 +1,5 @@
 import { NextRouter, useRouter } from "next/dist/client/router";
-import { ReactFragment, useState } from "react";
+import { ReactFragment, useContext, useState } from "react";
 
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
@@ -9,13 +9,16 @@ import MenuItem from "@mui/material/MenuItem";
 
 import { Paragraph } from "../styles/global";
 import { LineBar, MenuSelect } from "../styles/components/appBar";
+import { TransactionContext } from "../state/context/transactionContext";
+import { useDispatch, useSelector } from "react-redux";
+import { setDate, setPersonFilter, setSortFilter } from "../state/reducers";
+import { FilterSelect } from "../styles/pages/transactions";
 
 interface IProps {
   heading: string;
   group?: boolean;
   monthPicker?: boolean;
   children?: ReactFragment;
-  links: string[];
 }
 
 const AppBarMenu: React.FC<IProps> = ({
@@ -23,15 +26,29 @@ const AppBarMenu: React.FC<IProps> = ({
   group,
   monthPicker,
   children,
-  links,
 }) => {
+  const links: string[] = [
+    "Overview",
+    "Account",
+    "Calculator",
+    "Transactions",
+  ].filter((link) => link.toLocaleLowerCase() !== heading.toLocaleLowerCase());
   const router: NextRouter = useRouter();
   const [selectValue, setSelectValue] = useState<string>("Group");
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const open = Boolean(anchorEl);
+  const { chosenDate, personFilter, sortFilter } = useSelector(
+    (state) => state.baseData
+  );
 
-  const handleSelect = (e: any): void => {
-    setSelectValue(e.target.value);
+  const dispatch = useDispatch();
+
+  const selectPersonFilter = (e: any): void => {
+    dispatch(setPersonFilter(e.target.value));
+  };
+
+  const selectSortFilter = (e: any): void => {
+    dispatch(setSortFilter(e.target.value));
   };
 
   const toggleMenu = (e: any): void => {
@@ -48,6 +65,10 @@ const AppBarMenu: React.FC<IProps> = ({
     if (link.length >= 1) {
       router.push(`/${link}`);
     }
+  };
+
+  const handleMonthpicker = (e: any): void => {
+    dispatch(setDate(e.target.value));
   };
 
   return (
@@ -72,8 +93,7 @@ const AppBarMenu: React.FC<IProps> = ({
           >
             {links.map((link: any) => (
               <MenuItem value={link} key={link}>
-                {" "}
-                {link}{" "}
+                {link}
               </MenuItem>
             ))}
           </Menu>
@@ -82,21 +102,40 @@ const AppBarMenu: React.FC<IProps> = ({
           {heading}
         </Paragraph>
 
-        {children}
+        {sortFilter && (
+          <FilterSelect
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            defaultValue="Sort by"
+            value={sortFilter || "Date"}
+            onChange={selectSortFilter}
+          >
+            <MenuItem value="Date"> Date </MenuItem>
+            <MenuItem value="Amount"> Amount </MenuItem>
+            <MenuItem value="User"> User </MenuItem>
+          </FilterSelect>
+        )}
 
         {group && (
           <MenuSelect
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={selectValue}
-            onChange={handleSelect}
+            value={personFilter || "Group"}
+            onChange={selectPersonFilter}
           >
             <MenuItem value="Group"> Group </MenuItem>
             <MenuItem value="Person 1"> Person 1 </MenuItem>
             <MenuItem value="Person 2"> Person 2 </MenuItem>
           </MenuSelect>
         )}
-        {monthPicker && <input type="month" className="monthPicker" />}
+        {monthPicker && (
+          <input
+            type="month"
+            className="monthPicker"
+            defaultValue={chosenDate}
+            onChange={handleMonthpicker}
+          />
+        )}
       </Toolbar>
     </LineBar>
   );
