@@ -1,13 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import teamSlice from "./reducers/team";
-import transactionsSlice from "./reducers/transactions";
-import userSlice from "./reducers/user";
+import baseData from "./reducers/baseData";
 
 export const store = configureStore({
   reducer: {
-    userState: userSlice,
-    transactionsState: transactionsSlice,
-    teamState: teamSlice,
+    baseData: baseData,
   },
 });
 
