@@ -3,7 +3,6 @@ import { NextRouter, useRouter } from "next/dist/client/router";
 import { useMutation } from "@apollo/client";
 
 import { LOGIN } from "../../graphql";
-import { UserSearchContext } from "../../state/context/userContext";
 
 import Typography from "@mui/material/Typography";
 import {
@@ -15,8 +14,6 @@ import {
   CardButton,
   AccountIcon,
 } from "../../styles/pages/login";
-import { useSelector } from "react-redux";
-import { UserState } from "../../state/reducers/user";
 
 const Index: React.FC = () => {
   const router: NextRouter = useRouter();
@@ -24,10 +21,8 @@ const Index: React.FC = () => {
     email: "",
     password: "",
   });
-  const { setUserSearch } = useContext(UserSearchContext);
-  const [login, { loading: isLoggingIn, error: loginError }] =
+  const [login, { data: data, loading: isLoggingIn, error: loginError }] =
     useMutation(LOGIN);
-  const { userState } = useSelector((state: any) => state.userState);
 
   const handleSubmit = () => {
     login({
@@ -40,8 +35,13 @@ const Index: React.FC = () => {
 
     if (loginError) {
       console.log("loggin error");
-    } else {
-      setUserSearch(credentials.email);
+    }
+
+    if (data) {
+      const { login: refreshToken } = data;
+
+      localStorage.setItem("ref_sh_tkn", refreshToken.refreshToken);
+      localStorage.setItem("email", credentials.email);
       router.push("/");
     }
   };
