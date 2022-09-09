@@ -9,64 +9,14 @@ import {
   AddIcon,
 } from "../styles/main";
 import { Section, Heading } from "../styles/global";
-import { useDispatch, useSelector } from "react-redux";
-import { useContext, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useContext, useEffect, useMemo } from "react";
 import { UserSearchContext } from "../state/context/userContext";
 import { GET_USER, GET_TEAM, GET_TRANSACTIONS } from "../graphql";
 import { setUser, setTeam, setTransactions } from "../state/reducers";
 
-const Home: React.FC = () => {
+const Home: React.FC = (props) => {
   const router = useRouter();
-  const { userSearch } = useContext(UserSearchContext);
-  const dispatch = useDispatch();
-
-  const {
-    loading: isFetchingUser,
-    error: userError,
-    data: userData,
-    refetch: userRefetch,
-  } = useQuery(GET_USER, {
-    variables: {
-      email: userSearch,
-    },
-  });
-
-  const {
-    loading: isFetchingTeamInfo,
-    error: teamError,
-    data: teamData,
-    refetch: teamRefetch,
-  } = useQuery(GET_TEAM, {
-    variables: {
-      email: userSearch,
-    },
-  });
-
-  const {
-    loading: isFetchingTransactions,
-    error: transactionsError,
-    data: transactionsData,
-    refetch: transactionsRefetch,
-  } = useQuery(GET_TRANSACTIONS, {
-    variables: {
-      email: userSearch,
-    },
-  });
-
-  useEffect(() => {
-    userRefetch();
-    teamRefetch();
-    transactionsRefetch();
-
-    if (!isFetchingUser && !isFetchingTeamInfo && !isFetchingTransactions) {
-      dispatch(setUser(userData));
-      dispatch(setTeam(teamData));
-      dispatch(setTransactions(transactionsData));
-
-      if (window)
-        localStorage.setItem("ref_sh_tkn", userData.user.refreshToken);
-    }
-  }, [isFetchingUser, isFetchingTeamInfo, isFetchingTransactions]);
 
   const navigate = (e: any) => {
     const { target } = e;
