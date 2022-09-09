@@ -12,7 +12,7 @@ import FlashOnIcon from "@mui/icons-material/FlashOn";
 import LocalFireDepartmentIcon from "@mui/icons-material/LocalFireDepartment";
 
 import { IconsWrapper } from "../styles/components/iconCard";
-import { Paragraph } from "../styles/global";
+import { Paragraph } from ".";
 
 export interface IProps {
   data?: any; //preparation for conecting to dp, type is yet unknown
@@ -69,7 +69,7 @@ const layoutData: { name: string; value: string }[] = [
   },
 ];
 
-const IconCard: React.FC<IProps> = ({ data }) => {
+export const IconCard: React.FC<IProps> = ({ data }) => {
   const thisData = data; // preparation for database connection
   return (
     <>
@@ -96,14 +96,10 @@ const IconCard: React.FC<IProps> = ({ data }) => {
               )}
 
               <Paragraph variant="subtitle1">{name}</Paragraph>
-              <Paragraph variant="subtitle2" sx={{ color: "blue" }}>
-                {value}$
-              </Paragraph>
+              <Paragraph variant="subtitle2">{value}$</Paragraph>
             </IconsWrapper>
           );
         })}
     </>
   );
 };
-
-export default IconCard;

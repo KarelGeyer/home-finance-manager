@@ -4,8 +4,6 @@ import { useMutation } from "@apollo/client";
 import { DELETE_TRANSACTION, GET_TRANSACTIONS } from "../graphql";
 
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
-import Chip from "@mui/material/Chip";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
@@ -15,7 +13,7 @@ import {
   TransactionContentBox,
   TransactionDivider,
 } from "../styles/components/transaction";
-import { Paragraph } from "../styles/global";
+import { Badge, CustomButton, Paragraph } from ".";
 
 export interface IProps {
   name: string;
@@ -34,7 +32,7 @@ export interface IProps {
   transactionsRefetch: Function;
 }
 
-const Transaction: React.FC<IProps> = ({
+export const Transaction: React.FC<IProps> = ({
   id,
   name,
   user,
@@ -97,33 +95,29 @@ const Transaction: React.FC<IProps> = ({
         <Paragraph variant="subtitle1">{date}</Paragraph>
       </TransactionContentBox>
       <TransactionActionsBox>
-        <Chip label={category} color="primary" />
+        <Badge label={category} color="red" />
         <Paragraph variant="subtitle1">{name}</Paragraph>
         <Box>
-          <IconButton
+          <CustomButton
+            type="icon"
             size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
+            iconColor="inherit"
+            label="edit transaction"
             onClick={chooseTransaction}
           >
             <EditIcon />
-          </IconButton>
-          <IconButton
+          </CustomButton>
+          <CustomButton
+            type="icon"
             size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
+            iconColor="inherit"
+            aria-label="delete transaction"
             onClick={deleteTransaction}
           >
             <DeleteIcon />
-          </IconButton>
+          </CustomButton>
         </Box>
       </TransactionActionsBox>
     </TransactionCard>
   );
 };
-
-export default Transaction;

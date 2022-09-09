@@ -1,11 +1,11 @@
 import { Line } from "react-chartjs-2";
 
-interface IProps {
+export interface IProps {
   data: number[];
   labels: string[];
 }
 
-const LineGraph: React.FC<IProps> = ({ data, labels }) => {
+export const LineGraph: React.FC<IProps> = ({ data, labels }) => {
   return (
     <Line
       height={300}
@@ -28,5 +28,3 @@ const LineGraph: React.FC<IProps> = ({ data, labels }) => {
     />
   );
 };
-
-export default LineGraph;

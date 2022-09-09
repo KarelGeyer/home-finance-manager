@@ -1,27 +1,20 @@
 import { NextRouter, useRouter } from "next/dist/client/router";
-import { ReactFragment, useContext, useState } from "react";
+import { ReactFragment, useState } from "react";
 
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-
-import { Paragraph } from "../styles/global";
-import { LineBar, MenuSelect } from "../styles/components/appBar";
-import { TransactionContext } from "../state/context/transactionContext";
+import { Container, Division, LineBar } from "../styles/components/appBar";
 import { useDispatch, useSelector } from "react-redux";
 import { setDate, setPersonFilter, setSortFilter } from "../state/reducers";
-import { FilterSelect } from "../styles/pages/transactions";
+import { Box } from "@mui/material";
+import { CustomMenu, CustomSelect, Heading } from ".";
 
-interface IProps {
+export interface IProps {
   heading: string;
   group?: boolean;
   monthPicker?: boolean;
   children?: ReactFragment;
 }
 
-const AppBarMenu: React.FC<IProps> = ({
+export const AppBarMenu: React.FC<IProps> = ({
   heading,
   group,
   monthPicker,
@@ -34,8 +27,7 @@ const AppBarMenu: React.FC<IProps> = ({
     "Transactions",
   ].filter((link) => link.toLocaleLowerCase() !== heading.toLocaleLowerCase());
   const router: NextRouter = useRouter();
-  const [selectValue, setSelectValue] = useState<string>("Group");
-  const [anchorEl, setAnchorEl] = useState<any>(null);
+  const [anchorEl, setAnchorEl] = useState<Element>(null);
   const open = Boolean(anchorEl);
   const { chosenDate, personFilter, sortFilter } = useSelector(
     (state) => state.baseData
@@ -73,72 +65,40 @@ const AppBarMenu: React.FC<IProps> = ({
 
   return (
     <LineBar position="static" color="secondary">
-      <Toolbar>
-        <IconButton
-          onClick={toggleMenu}
-          size="large"
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-        >
-          <MenuIcon />
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            onClick={navigateTo}
-            open={open}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
-            }}
-          >
-            {links.map((link: any) => (
-              <MenuItem value={link} key={link}>
-                {link}
-              </MenuItem>
-            ))}
-          </Menu>
-        </IconButton>
-        <Paragraph variant="h6" sx={{ flexGrow: 1 }}>
-          {heading}
-        </Paragraph>
+      <Container>
+        <Division>
+          <CustomMenu list={links} onClick={navigateTo} />
+          <Heading variant="h5">{heading}</Heading>
+        </Division>
+        <Division>
+          {sortFilter && (
+            <CustomSelect
+              label={"sort-filter-select"}
+              value={sortFilter}
+              onChangeEvent={selectSortFilter}
+              list={["Date", "Amount", "User"]}
+            />
+          )}
 
-        {sortFilter && (
-          <FilterSelect
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            defaultValue="Sort by"
-            value={sortFilter || "Date"}
-            onChange={selectSortFilter}
-          >
-            <MenuItem value="Date"> Date </MenuItem>
-            <MenuItem value="Amount"> Amount </MenuItem>
-            <MenuItem value="User"> User </MenuItem>
-          </FilterSelect>
-        )}
+          {group && (
+            <CustomSelect
+              label={"group-select"}
+              value={personFilter}
+              onChangeEvent={selectPersonFilter}
+              list={["Group", "Person1", "Person2"]}
+            />
+          )}
 
-        {group && (
-          <MenuSelect
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={personFilter || "Group"}
-            onChange={selectPersonFilter}
-          >
-            <MenuItem value="Group"> Group </MenuItem>
-            <MenuItem value="Person 1"> Person 1 </MenuItem>
-            <MenuItem value="Person 2"> Person 2 </MenuItem>
-          </MenuSelect>
-        )}
-        {monthPicker && (
-          <input
-            type="month"
-            className="monthPicker"
-            defaultValue={chosenDate}
-            onChange={handleMonthpicker}
-          />
-        )}
-      </Toolbar>
+          {monthPicker && (
+            <input
+              type="month"
+              className="monthPicker"
+              defaultValue={chosenDate}
+              onChange={handleMonthpicker}
+            />
+          )}
+        </Division>
+      </Container>
     </LineBar>
   );
 };
-
-export default AppBarMenu;

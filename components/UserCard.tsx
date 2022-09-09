@@ -2,8 +2,8 @@ import Divider from "@mui/material/Divider";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EuroIcon from "@mui/icons-material/Euro";
 
-import { Paragraph } from "../styles/global";
 import { Usercard } from "../styles/components/userCard";
+import { Paragraph } from ".";
 
 export interface IProps {
   user: {
@@ -12,7 +12,7 @@ export interface IProps {
   };
 }
 
-const UserCard: React.FC<IProps> = ({ user }) => {
+export const UserCard: React.FC<IProps> = ({ user }) => {
   const { name, amount } = user;
 
   return (
@@ -47,5 +47,3 @@ const UserCard: React.FC<IProps> = ({ user }) => {
     </>
   );
 };
-
-export default UserCard;
