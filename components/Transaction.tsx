@@ -1,12 +1,13 @@
-import axios from "axios";
+import { Dispatch, SetStateAction } from "react";
+import { useMutation } from "@apollo/client";
+
+import { DELETE_TRANSACTION, GET_TRANSACTIONS } from "../graphql";
 
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Chip from "@mui/material/Chip";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-
-import { TRANSACTIONS_URL } from "../assets/global";
 
 import {
   TransactionActionsBox,
@@ -18,35 +19,86 @@ import { Paragraph } from "../styles/global";
 
 export interface IProps {
   name: string;
-  user: string;
-  price: string;
-  tags: string | string[];
+  user: {
+    name: string;
+    surname: string;
+  };
+  price: number;
+  category: string;
+  isLoan: boolean;
+  currency: string;
   id: string;
+  date: string;
+  setTransactionDetails: Dispatch<SetStateAction<any>>;
+  transactionDetails: any;
+  transactionsRefetch: Function;
 }
 
-const Transaction: React.FC<IProps> = ({ name, user, price, tags, id }) => {
-  const handleDelete = (): void => {
-    axios
-      .delete(TRANSACTIONS_URL, {
-        data: {
-          _id: id,
+const Transaction: React.FC<IProps> = ({
+  id,
+  name,
+  user,
+  price,
+  category,
+  currency,
+  isLoan,
+  date,
+  setTransactionDetails,
+  transactionDetails,
+  transactionsRefetch,
+}) => {
+  const personName = `${user.name} ${user.surname}`;
+  const [deleteMutation, { data: data, error: deleteError }] =
+    useMutation(DELETE_TRANSACTION);
+
+  const chooseTransaction = () => {
+    setTransactionDetails({
+      ...transactionDetails,
+      id,
+      name,
+      category,
+      sum: price,
+      currency,
+    });
+  };
+
+  const deleteTransaction = () => {
+    const token = localStorage?.getItem("ref_sh_tkn");
+
+    deleteMutation({
+      variables: {
+        transaction: {
+          id,
+          name,
+          category,
+          sum: price,
+          currency,
+          isLoan,
         },
-      })
-      .then((res: any) => console.log(res))
-      .catch((err: any) => console.log(err));
+      },
+      context: {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token,
+        },
+      },
+      refetchQueries: [{ query: GET_TRANSACTIONS }],
+    });
+    transactionsRefetch();
   };
 
   return (
     <TransactionCard>
       <TransactionContentBox>
-        <Paragraph variant="subtitle1">{name}</Paragraph>
-        <TransactionDivider variant="inset" orientation="vertical" />
-        <Paragraph variant="subtitle1">{user}</Paragraph>
+        <Paragraph variant="subtitle1">{personName}</Paragraph>
         <TransactionDivider variant="inset" orientation="vertical" />
         <Paragraph variant="subtitle1">{price}</Paragraph>
+        <TransactionDivider variant="inset" orientation="vertical" />
+        <Paragraph variant="subtitle1">{date}</Paragraph>
       </TransactionContentBox>
       <TransactionActionsBox>
-        <Chip label={tags} color="primary" />
+        <Chip label={category} color="primary" />
+        <Paragraph variant="subtitle1">{name}</Paragraph>
         <Box>
           <IconButton
             size="large"
@@ -54,6 +106,7 @@ const Transaction: React.FC<IProps> = ({ name, user, price, tags, id }) => {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={chooseTransaction}
           >
             <EditIcon />
           </IconButton>
@@ -63,7 +116,7 @@ const Transaction: React.FC<IProps> = ({ name, user, price, tags, id }) => {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
-            onClick={handleDelete}
+            onClick={deleteTransaction}
           >
             <DeleteIcon />
           </IconButton>
