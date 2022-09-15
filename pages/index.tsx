@@ -1,21 +1,15 @@
 import { useRouter } from "next/dist/client/router";
-import { useQuery, useMutation, gql } from "@apollo/client";
+import { Heading } from "../components";
+import { ROUTE_NAMES } from "../helpers";
 import {
   MainBox,
   GridContainer,
   GridItem,
   PieGraphIcon,
-  AccountIcon,
-  AddIcon,
-} from "../styles/main";
-import { Section, Heading } from "../styles/global";
-import { useDispatch } from "react-redux";
-import { useContext, useEffect, useMemo } from "react";
-import { UserSearchContext } from "../state/context/userContext";
-import { GET_USER, GET_TEAM, GET_TRANSACTIONS } from "../graphql";
-import { setUser, setTeam, setTransactions } from "../state/reducers";
+  MainPageSection,
+} from "../styles/pages/main";
 
-const Home: React.FC = (props) => {
+const Home: React.FC = () => {
   const router = useRouter();
 
   const navigate = (e: any) => {
@@ -26,30 +20,20 @@ const Home: React.FC = (props) => {
   };
 
   return (
-    <Section>
+    <MainPageSection>
       <MainBox>
         <GridContainer container spacing={0}>
-          <GridItem item xs={5} onClick={(e) => navigate(e)}>
-            <PieGraphIcon color="primary" />
-            <Heading variant="h3" color="primary">
-              OVERVIEW
-            </Heading>
-          </GridItem>
-          <GridItem item xs={5} onClick={(e) => navigate(e)}>
-            <AccountIcon color="primary" />
-            <Heading variant="h3" color="primary">
-              ACCOUNT
-            </Heading>
-          </GridItem>
-          <GridItem item xs={5} onClick={(e) => navigate(e)}>
-            <AddIcon color="primary" />
-            <Heading variant="h3" color="primary">
-              TRANSACTIONS
-            </Heading>
-          </GridItem>
+          {ROUTE_NAMES.map((route) => {
+            return (
+              <GridItem item xs={5} onClick={(e) => navigate(e)} key={route}>
+                <PieGraphIcon color="primary" />
+                <Heading variant="h2">{route.toLocaleUpperCase()}</Heading>
+              </GridItem>
+            );
+          })}
         </GridContainer>
       </MainBox>
-    </Section>
+    </MainPageSection>
   );
 };
 

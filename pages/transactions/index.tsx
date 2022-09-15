@@ -1,41 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
-
-import AppBarMenu from "../../components/AppBar";
-import Transaction, {
-  IProps as TransactionProps,
-} from "../../components/Transaction";
-
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import MenuItem from "@mui/material/MenuItem";
-
-import {
-  GridContainer,
-  TransactionGrid,
-} from "../../styles/pages/transactions";
-import {
-  Section,
-  MainHeading,
-  Form,
-  FormInput,
-  FormButton,
-  FormSelect,
-} from "../../styles/global";
+import { useSelector } from "react-redux";
+import { useMutation, useQuery } from "@apollo/client";
 
 import { getDate } from "../../helpers";
-import { useMutation, useQuery } from "@apollo/client";
 import {
   CREATE_TRANSACTION,
   GET_TRANSACTIONS,
   GET_USER,
   UPDATE_TRANSACTION,
 } from "../../graphql";
-import { useSelector } from "react-redux";
-import { Checkbox, FormControlLabel } from "@mui/material";
 
-export interface IProps {
-  transactions: Transaction[];
-}
+import {
+  CustomButton,
+  CustomCheckbox,
+  CustomInput,
+  CustomSelect,
+  Heading,
+  Transaction,
+} from "../../components";
+
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+
+import { TransactionGrid } from "../../styles/pages/transactions";
+import { Form } from "../../styles/global";
+import { Loan } from "../overview";
 
 export interface Transaction {
   name: string;
@@ -69,13 +58,10 @@ export enum CURRENCY {
   EUR = "EUR",
 }
 
-const Transactions: React.FC<IProps> = () => {
-  const links: string[] = ["overview", "account", "calculator"];
-
-  const [filterValue, setFilterValue] = useState<string>("Group");
-  const [modalOpened, setModalOpened] = useState<boolean>(false);
+const Transactions: React.FC = () => {
   const [isNewTransaction, setIsNewTransaction] = useState<boolean>(true);
   const [transactions, setTransactions] = useState<Transaction[]>();
+  const [loans, setLoans] = useState<any>();
 
   const {
     chosenDate,
@@ -137,6 +123,46 @@ const Transactions: React.FC<IProps> = () => {
       return thisMonthTransaction;
     });
 
+  const cleanLoans: Loan[] =
+    loans &&
+    loans.filter((loan) => {
+      const loanYear = loan.date.split("-")[0];
+      const loanMonth = loan.date.split("-")[1];
+
+      const thisMonthLoan =
+        parseInt(loanYear) == parseInt(chosenDate.split("-")[0]) &&
+        parseInt(loanMonth) == parseInt(chosenDate.split("-")[1]);
+
+      return thisMonthLoan;
+    });
+
+  const sortedLoans: Loan[] = useMemo(() => {
+    if (cleanLoans) {
+      if (sortFilter === "Date") {
+        return cleanLoans.sort((loan_1, loan_2) => {
+          const date_1: number = parseInt(loan_1.date.split("-")[2]);
+          const date_2: number = parseInt(loan_2.date.split("-")[2]);
+          return date_1 - date_2;
+        });
+      }
+
+      if (sortFilter === "Amount") {
+        return cleanLoans.sort((loan_1, loan_2) => {
+          return loan_1.sum - loan_2.sum;
+        });
+      }
+
+      if (sortFilter === "User") {
+        return cleanLoans.sort((loan_1, loan_2) => {
+          //@ts-ignore
+          return loan_1.person.name - loan_2.person.name;
+        });
+      }
+    }
+  }, [sortFilter, cleanLoans]);
+
+  console.log(sortedLoans);
+
   const sortedData: Transaction[] = useMemo(() => {
     if (cleanTransactions) {
       if (sortFilter === "Date") {
@@ -167,15 +193,20 @@ const Transactions: React.FC<IProps> = () => {
     userRefetch();
 
     let transactions: Transaction[] = [];
+    let loans: Loan[] = [];
     const teamData = transactionsData?.user.team;
     teamData &&
       teamData.forEach((user) => {
         user.transactions.forEach((transaction) => {
           transactions.push(transaction);
         });
+        user.loans.forEach((transaction) => {
+          loans.push(transaction);
+        });
       });
 
     setTransactions(transactions);
+    setLoans(loans);
     setTransactionDetails({
       ...transactionDetails,
       personId: userData && userData.user.accountID,
@@ -185,7 +216,15 @@ const Transactions: React.FC<IProps> = () => {
   const handleTransaction = (): void => {
     const { id, name, currency, category, sum, isLoan, personId, date } =
       transactionDetails;
+    if (name == "" || id == "" || category == "" || sum == 0) {
+      return;
+    }
+
     const token = localStorage?.getItem("ref_sh_tkn");
+    if (!token) {
+      // THIS WILL NEED TO HAVE SOME LOGIC
+      console.log("missing token");
+    }
 
     if (isNewTransaction) {
       createMutation({
@@ -235,127 +274,111 @@ const Transactions: React.FC<IProps> = () => {
   };
 
   return (
-    <Section sx={{ fontFamily: "Montserrat" }}>
-      <AppBarMenu heading="Transactions" group={true} monthPicker={true} />
-      <GridContainer container sx={{ padding: "20px" }}>
-        <TransactionGrid item xs={12} md={5}>
-          <MainHeading variant="h4">Transactions</MainHeading>
-          <Box sx={{ overflow: "scroll", overflowX: "hidden" }}>
-            {sortedData &&
-              sortedData.map((transaction: any, index: number) => (
-                <Transaction
-                  name={transaction.name}
-                  user={transaction.person}
-                  price={transaction.sum}
-                  category={transaction.category}
-                  currency={transaction.currency}
-                  isLoan={transaction.isLoan}
-                  date={transaction.date}
-                  id={transaction.id}
-                  key={transaction.id}
-                  transactionDetails={transactionDetails}
-                  setTransactionDetails={setTransactionDetails}
-                  transactionsRefetch={transactionsRefetch}
-                />
-              ))}
-          </Box>
-        </TransactionGrid>
-        <Grid
-          item
-          xs={12}
-          md={7}
-          sx={{ textAlign: "center", padding: "160px 70px" }}
-        >
-          <MainHeading variant="h4">Selected Transaction</MainHeading>
-          <Form component="form">
-            <FormInput
-              label="Name"
-              type="text"
-              value={transactionDetails.name}
-              onChange={(e) => {
-                setTransactionDetails({
-                  ...transactionDetails,
-                  name: e.target.value,
-                });
-              }}
-            />
-            <FormInput
-              label="Category"
-              type="text"
-              value={transactionDetails.category}
-              onChange={(e) => {
-                setTransactionDetails({
-                  ...transactionDetails,
-                  category: e.target.value,
-                });
-              }}
-            />
-            <FormInput
-              label="Sum"
-              type="number"
-              value={transactionDetails.sum}
-              onChange={(e) => {
-                setTransactionDetails({
-                  ...transactionDetails,
-                  sum: parseInt(e.target.value),
-                });
-              }}
-            />
-            <FormInput
-              label="Date"
-              type="date"
-              value={transactionDetails.date}
-              onChange={(e) => {
-                setTransactionDetails({
-                  ...transactionDetails,
-                  date: e.target.value,
-                });
-              }}
-            />
-            <FormSelect
-              labelId="currency-select-label"
-              id="currency-select"
-              defaultValue="Select Currency"
-              value={transactionDetails.currency}
-              onChange={(e: { target: { value: CURRENCY } }) => {
-                setTransactionDetails({
-                  ...transactionDetails,
-                  currency: e.target.value,
-                });
-              }}
-            >
-              <MenuItem value={CURRENCY.CZK}>CZK</MenuItem>
-              <MenuItem value={CURRENCY.EUR}>EUR</MenuItem>
-            </FormSelect>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  onChange={(e) =>
-                    setTransactionDetails({
-                      ...transactionDetails,
-                      isLoan: e.target.checked,
-                    })
-                  }
-                />
-              }
-              label="Is Loan"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  defaultChecked
-                  onChange={(e) => setIsNewTransaction(e.target.checked)}
-                />
-              }
-              label="Is New"
-            />
-            <FormButton variant="contained" onClick={handleTransaction}>
-              submit
-            </FormButton>
-          </Form>
-        </Grid>
-      </GridContainer>
-    </Section>
+    <>
+      <TransactionGrid item xs={12} md={5}>
+        <Heading variant="h3">Transactions</Heading>
+        <Box sx={{ overflow: "scroll", overflowX: "hidden" }}>
+          {sortedData &&
+            sortedData.map((transaction: any, index: number) => (
+              <Transaction
+                name={transaction.name}
+                user={transaction.person}
+                price={transaction.sum}
+                category={transaction.category}
+                currency={transaction.currency}
+                isLoan={transaction.isLoan}
+                date={transaction.date}
+                id={transaction.id}
+                key={transaction.id}
+                transactionDetails={transactionDetails}
+                setTransactionDetails={setTransactionDetails}
+                transactionsRefetch={transactionsRefetch}
+              />
+            ))}
+        </Box>
+      </TransactionGrid>
+      <Grid
+        item
+        xs={12}
+        md={7}
+        sx={{ textAlign: "center", padding: "160px 70px" }}
+      >
+        <Heading variant="h3">Selected Transaction</Heading>
+        <Form component="form">
+          <CustomInput
+            label="Name"
+            type="text"
+            value={transactionDetails.name}
+            onChange={(e) => {
+              setTransactionDetails({
+                ...transactionDetails,
+                name: e.target.value,
+              });
+            }}
+          />
+          <CustomInput
+            label="Category"
+            type="text"
+            value={transactionDetails.category}
+            onChange={(e) => {
+              setTransactionDetails({
+                ...transactionDetails,
+                category: e.target.value,
+              });
+            }}
+          />
+          <CustomInput
+            label="Sum"
+            type="number"
+            value={transactionDetails.sum}
+            onChange={(e) => {
+              setTransactionDetails({
+                ...transactionDetails,
+                sum: parseInt(e.target.value),
+              });
+            }}
+          />
+          <CustomInput
+            label="Date"
+            type="date"
+            value={transactionDetails.date}
+            onChange={(e) => {
+              setTransactionDetails({
+                ...transactionDetails,
+                date: e.target.value,
+              });
+            }}
+          />
+          <CustomSelect
+            label="currency-select-label"
+            value={transactionDetails.currency}
+            //@ts-ignore
+            onChange={(e: { target: { value: CURRENCY } }) =>
+              setTransactionDetails({
+                ...transactionDetails,
+                currency: e.target.value,
+              })
+            }
+            list={["CZK", "EUR"]}
+          />
+          <CustomCheckbox
+            isChecked={true}
+            onChange={(e) => setIsNewTransaction(e.target.checked)}
+            label="Is New"
+          />
+          <CustomButton
+            type="button"
+            variant="contained"
+            size="medium"
+            onClick={handleTransaction}
+            btnColor="primary"
+            isSingle={true}
+          >
+            submit
+          </CustomButton>
+        </Form>
+      </Grid>
+    </>
   );
 };
 

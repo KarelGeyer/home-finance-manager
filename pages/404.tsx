@@ -1,10 +1,8 @@
 import { useEffect } from "react";
 import { NextRouter, useRouter } from "next/dist/client/router";
 
-import Box from "@mui/material/Box";
 import WarningIcon from "@mui/icons-material/Warning";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import { CustomButton, Heading } from "../components";
 
 const NotFound: React.FC = () => {
   const router: NextRouter = useRouter();
@@ -20,16 +18,7 @@ const NotFound: React.FC = () => {
   };
 
   return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        height: "80vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-      }}
-    >
+    <>
       <WarningIcon
         sx={{
           width: "300px",
@@ -37,44 +26,21 @@ const NotFound: React.FC = () => {
         }}
         color="error"
       />
-      <Typography
-        variant="h3"
-        color="error"
-        sx={{
-          m: 2,
-          fontFamily: "Montserrat",
-          fontWeight: 600,
-          textShadow: "8px 8px 10px #000, 5px 5px 15px #000",
-        }}
-      >
-        PAGE NOT FOUND!
-      </Typography>
-      <Typography
-        variant="h5"
-        sx={{
-          m: 2,
-          fontFamily: "Montserrat",
-          fontWeight: 600,
-          textShadow: "1px 0px 3px #FFF, 1px 0px 1px #FFF",
-          color: "#000",
-        }}
-      >
+      <Heading variant="h2">PAGE NOT FOUND!</Heading>
+      <Heading variant="h5">
         You will be redirected back in 5 seconds, in case it does not happen,
         click the button bellow
-      </Typography>
-      <Button
+      </Heading>
+      <CustomButton
+        type="button"
+        size="medium"
         variant="contained"
-        color="error"
-        sx={{
-          marginTop: "60px",
-          width: "300px",
-          height: "60px",
-        }}
+        btnColor="error"
         onClick={redirect}
       >
         Go back
-      </Button>
-    </Box>
+      </CustomButton>
+    </>
   );
 };
 
