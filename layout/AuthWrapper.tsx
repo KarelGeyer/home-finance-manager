@@ -1,8 +1,7 @@
-import { ReactElement, useContext, useEffect } from "react";
+import { ReactElement, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useMutation } from "@apollo/client";
 import { AUTHENTICATE } from "../graphql";
-import { UserSearchContext } from "../state/context/userContext";
 import { useDispatch } from "react-redux";
 import { setEmail } from "../state/reducers";
 
