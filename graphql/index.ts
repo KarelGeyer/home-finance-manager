@@ -3,7 +3,7 @@ import {
   UPDATE_TRANSACTION,
   CREATE_TRANSACTION,
 } from "./mutations/transactions";
-import { LOGIN, AUTHENTICATE } from "./mutations/users";
+import { LOGIN, AUTHENTICATE, UPDATE_USER } from "./mutations/users";
 import { GET_TRANSACTIONS } from "./queries/transactions";
 import { GET_TEAM, GET_USER } from "./queries/users";
 
@@ -14,6 +14,7 @@ export {
   DELETE_TRANSACTION,
   UPDATE_TRANSACTION,
   CREATE_TRANSACTION,
+  UPDATE_USER,
 
   // QUERIES
   GET_USER,

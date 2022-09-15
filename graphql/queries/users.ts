@@ -8,6 +8,7 @@ export const GET_USER = gql`
       surname
       email
       phoneNumber
+      password
       currency
       accountID
       teamID

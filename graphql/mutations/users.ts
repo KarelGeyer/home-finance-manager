@@ -15,3 +15,23 @@ export const AUTHENTICATE = gql`
     }
   }
 `;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($user: UserInput) {
+    updateUser(user: $user) {
+      name
+      surname
+      email
+    }
+  }
+`;
+
+export const DELETE_USER = gql`
+  mutation DeleteUser($user: UserInput) {
+    deleteUser(user: $user) {
+      id
+      name
+      surname
+    }
+  }
+`;
