@@ -9,7 +9,6 @@ export const GET_TRANSACTIONS = gql`
         sum
         currency
         date
-        isLoan
         personId
         person {
           name
@@ -18,19 +17,38 @@ export const GET_TRANSACTIONS = gql`
         id
       }
       team {
+        name
+        surname
         transactions {
+          id
           name
           category
           sum
           currency
           date
-          isLoan
           personId
           person {
             name
             surname
           }
-          id
+        }
+        loans {
+          name
+          sum
+          currency
+          date
+          creditorEmail
+          debtorEmail
+          creditor {
+            name
+            surname
+            email
+          }
+          debtor {
+            name
+            surname
+            email
+          }
         }
       }
     }
