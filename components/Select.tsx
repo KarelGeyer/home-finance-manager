@@ -1,25 +1,25 @@
 import { MenuItem } from "@mui/material";
-import { MenuSelect } from "../styles/components/select";
+import { FormSelect } from "../styles/global";
 
 export interface IProps {
   value: string | number;
-  onChangeEvent: any;
+  onChange: any;
   list: string[] | number[];
   label?: string;
 }
 
 export const CustomSelect: React.FC<IProps> = ({
   value,
-  onChangeEvent,
+  onChange,
   list,
   label,
 }) => {
   return (
-    <MenuSelect
+    <FormSelect
       labelId={label}
       id="simple-select"
       value={value}
-      onChange={onChangeEvent}
+      onChange={onChange}
     >
       {list &&
         list.map((item: string | number) => {
@@ -29,6 +29,6 @@ export const CustomSelect: React.FC<IProps> = ({
             </MenuItem>
           );
         })}
-    </MenuSelect>
+    </FormSelect>
   );
 };

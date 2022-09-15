@@ -1,31 +1,28 @@
 import { NextRouter, useRouter } from "next/dist/client/router";
-import { ReactFragment, useState } from "react";
+import { useState } from "react";
 
 import { Container, Division, LineBar } from "../styles/components/appBar";
 import { useDispatch, useSelector } from "react-redux";
 import { setDate, setPersonFilter, setSortFilter } from "../state/reducers";
-import { Box } from "@mui/material";
-import { CustomMenu, CustomSelect, Heading } from ".";
+import { CustomInput, CustomMenu, CustomSelect, Heading } from ".";
+import { ROUTE_NAMES, SORT_FILTER_LABELS } from "../helpers";
 
 export interface IProps {
   heading: string;
-  group?: boolean;
-  monthPicker?: boolean;
-  children?: ReactFragment;
+  hasGroupFilter?: boolean;
+  hasSortFilter?: boolean;
+  hasMonthPicker?: boolean;
 }
 
 export const AppBarMenu: React.FC<IProps> = ({
   heading,
-  group,
-  monthPicker,
-  children,
+  hasGroupFilter,
+  hasSortFilter,
+  hasMonthPicker,
 }) => {
-  const links: string[] = [
-    "Overview",
-    "Account",
-    "Calculator",
-    "Transactions",
-  ].filter((link) => link.toLocaleLowerCase() !== heading.toLocaleLowerCase());
+  const links: string[] = ROUTE_NAMES.filter(
+    (link) => link.toLocaleLowerCase() !== heading.toLocaleLowerCase()
+  );
   const router: NextRouter = useRouter();
   const [anchorEl, setAnchorEl] = useState<Element>(null);
   const open = Boolean(anchorEl);
@@ -40,15 +37,8 @@ export const AppBarMenu: React.FC<IProps> = ({
   };
 
   const selectSortFilter = (e: any): void => {
+    console.log(e);
     dispatch(setSortFilter(e.target.value));
-  };
-
-  const toggleMenu = (e: any): void => {
-    if (!open) {
-      setAnchorEl(e.currentTarget);
-    } else {
-      setAnchorEl(null);
-    }
   };
 
   const navigateTo = (e: any): void => {
@@ -71,29 +61,28 @@ export const AppBarMenu: React.FC<IProps> = ({
           <Heading variant="h5">{heading}</Heading>
         </Division>
         <Division>
-          {sortFilter && (
+          {hasSortFilter && (
             <CustomSelect
               label={"sort-filter-select"}
               value={sortFilter}
-              onChangeEvent={selectSortFilter}
-              list={["Date", "Amount", "User"]}
+              onChange={selectSortFilter}
+              list={SORT_FILTER_LABELS}
             />
           )}
 
-          {group && (
+          {hasGroupFilter && (
             <CustomSelect
               label={"group-select"}
               value={personFilter}
-              onChangeEvent={selectPersonFilter}
+              onChange={selectPersonFilter}
               list={["Group", "Person1", "Person2"]}
             />
           )}
 
-          {monthPicker && (
-            <input
+          {hasMonthPicker && (
+            <CustomInput
               type="month"
-              className="monthPicker"
-              defaultValue={chosenDate}
+              value={chosenDate}
               onChange={handleMonthpicker}
             />
           )}

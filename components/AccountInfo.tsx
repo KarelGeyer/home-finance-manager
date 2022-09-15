@@ -6,10 +6,19 @@ export interface IProps {
 }
 
 export const AccountInfo: React.FC<IProps> = ({ label, information }) => {
-  return (
-    <Container>
-      <Paragraph variant="subtitle1">{label}:</Paragraph>
-      <Paragraph variant="subtitle1">{information}</Paragraph>
-    </Container>
-  );
+  if (
+    label != "__typename" &&
+    label != "id" &&
+    label != "refreshToken" &&
+    label != "password"
+  ) {
+    return (
+      <Container>
+        <Paragraph variant="subtitle1">{label}:</Paragraph>
+        <Paragraph variant="subtitle1">{information}</Paragraph>
+      </Container>
+    );
+  } else {
+    return <></>;
+  }
 };

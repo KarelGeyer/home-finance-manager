@@ -11,9 +11,9 @@ import {
   TransactionActionsBox,
   TransactionCard,
   TransactionContentBox,
-  TransactionDivider,
 } from "../styles/components/transaction";
 import { Badge, CustomButton, Paragraph } from ".";
+import { CustomDivider } from "./Divider";
 
 export interface IProps {
   name: string;
@@ -87,16 +87,10 @@ export const Transaction: React.FC<IProps> = ({
 
   return (
     <TransactionCard>
-      <TransactionContentBox>
-        <Paragraph variant="subtitle1">{personName}</Paragraph>
-        <TransactionDivider variant="inset" orientation="vertical" />
-        <Paragraph variant="subtitle1">{price}</Paragraph>
-        <TransactionDivider variant="inset" orientation="vertical" />
-        <Paragraph variant="subtitle1">{date}</Paragraph>
-      </TransactionContentBox>
       <TransactionActionsBox>
-        <Badge label={category} color="red" />
-        <Paragraph variant="subtitle1">{name}</Paragraph>
+        <Box>
+          <Badge label={category} color="red" />
+        </Box>
         <Box>
           <CustomButton
             type="icon"
@@ -118,6 +112,16 @@ export const Transaction: React.FC<IProps> = ({
           </CustomButton>
         </Box>
       </TransactionActionsBox>
+      <TransactionContentBox>
+        <Paragraph variant="subtitle1">{name}</Paragraph>
+      </TransactionContentBox>
+      <TransactionContentBox>
+        <Paragraph variant="subtitle1">{personName}</Paragraph>
+        <CustomDivider variant="inset" orientation="vertical" />
+        <Paragraph variant="subtitle1">{price}</Paragraph>
+        <CustomDivider variant="inset" orientation="vertical" />
+        <Paragraph variant="subtitle1">{date}</Paragraph>
+      </TransactionContentBox>
     </TransactionCard>
   );
 };

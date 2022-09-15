@@ -1,5 +1,6 @@
-import { Button, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { ReactFragment } from "react";
+import { ButtonP, FlexBox, FormButton } from "../styles/global";
 
 export interface IProps {
   type: string;
@@ -25,6 +26,7 @@ export interface IProps {
     | "warning";
   variant?: "text" | "outlined" | "contained";
   children: ReactFragment;
+  isSingle?: boolean;
 }
 
 export const CustomButton: React.FC<IProps> = ({
@@ -36,6 +38,7 @@ export const CustomButton: React.FC<IProps> = ({
   btnColor,
   variant,
   children,
+  isSingle,
 }) => {
   return (
     <>
@@ -48,15 +51,26 @@ export const CustomButton: React.FC<IProps> = ({
         >
           {children}
         </IconButton>
-      ) : (
-        <Button
+      ) : !isSingle ? (
+        <FormButton
           variant={variant}
           onClick={onClick}
           color={btnColor}
           size={size}
         >
-          {children}
-        </Button>
+          <ButtonP>{children}</ButtonP>
+        </FormButton>
+      ) : (
+        <FlexBox>
+          <FormButton
+            variant={variant}
+            onClick={onClick}
+            color={btnColor}
+            size={size}
+          >
+            <ButtonP>{children}</ButtonP>
+          </FormButton>
+        </FlexBox>
       )}
     </>
   );

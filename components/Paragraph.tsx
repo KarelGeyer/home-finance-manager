@@ -1,5 +1,5 @@
-import { Typography } from "@mui/material";
 import { ReactFragment } from "react";
+import { P } from "../styles/global";
 
 export interface IProps {
   variant: "subtitle1" | "subtitle2";
@@ -7,5 +7,5 @@ export interface IProps {
 }
 
 export const Paragraph: React.FC<IProps> = ({ variant, children }) => {
-  return <Typography variant={variant}>{children}</Typography>;
+  return <P variant={variant}>{children}</P>;
 };

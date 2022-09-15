@@ -11,7 +11,6 @@ import { Paragraph, IProps as ParagraphProps } from "./Paragraph";
 import { PieGraph, IProps as PieGraphProps } from "./PieGraph";
 import { CustomSelect, IProps as CustomSelectProps } from "./Select";
 import { Transaction, IProps as TransactionProps } from "./Transaction";
-import { UserCard, IProps as UserCardProps } from "./UserCard";
 import { CustomInput, IProps as CustomInputProps } from "./Input";
 import { CustomCheckbox, IProps as CustomCheckboxProps } from "./Checkbox";
 
@@ -29,7 +28,6 @@ export {
   PieGraph,
   CustomSelect,
   Transaction,
-  UserCard,
   CustomInput,
   CustomCheckbox,
 };
@@ -48,7 +46,6 @@ export type {
   PieGraphProps,
   CustomSelectProps,
   TransactionProps,
-  UserCardProps,
   CustomInputProps,
   CustomCheckboxProps,
 };
