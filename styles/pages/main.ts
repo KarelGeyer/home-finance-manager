@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import PieChartIcon from "@mui/icons-material/PieChart";
 
-export const Section = styled(Box)(() => ({
+export const MainPageSection = styled(Box)(() => ({
   padding: "0 2rem",
   width: "100%",
   height: "100vh",

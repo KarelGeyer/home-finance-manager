@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-export const Section = styled(Box)(() => ({
+export const LoginSection = styled(Box)(() => ({
   padding: "0 2rem",
   backgroundImage: "url('../public/background.jpg')",
   backgroundSize: "cover",

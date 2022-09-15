@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
-import CircularProgress from "@mui/material/CircularProgress";
+import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 
 export const Section = styled(Box)(() => ({
@@ -13,6 +13,12 @@ export const Section = styled(Box)(() => ({
   alignItems: "center",
   flexDirection: "column",
   fontFamily: "Montserrat",
+}));
+
+export const GridContainer = styled(Grid)(() => ({
+  backgroundColor: "rgb(255, 255, 255, 0.9)",
+  width: "100%",
+  padding: "35px 20px",
 }));
 
 export const MaxWidthBox = styled(Box)(() => ({
@@ -25,16 +31,10 @@ export const MaxWidthBox = styled(Box)(() => ({
   margin: "0 auto",
 }));
 
-export const FormBox = styled(Box)(() => ({
-  backgroundColor: "white",
-  width: "50%",
-  height: "50vh",
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  borderRadius: "10px",
-  padding: "10px 35px",
+export const FlexBox = styled(Box)(() => ({
+  width: "100%",
+  display: "flex",
+  justifyContent: "center",
 }));
 
 export const Form = styled(Box)(() => ({
@@ -43,57 +43,46 @@ export const Form = styled(Box)(() => ({
   justifyContent: "space-between",
 }));
 
-export const FormInput = styled(TextField)(() => ({
-  margin: "10px 0",
+export const FormInput = styled(TextField, {
+  shouldForwardProp: (props) => props !== "isInForm",
+})(({ isInForm }: any) => ({
+  margin: isInForm ? "10px 0" : "10px",
+  minWidth: "150px",
   width: "45%",
   fontFamily: "Montserrat",
 }));
 
-export const FormSelect = styled(Select)(() => ({
-  margin: "10px 0",
+export const FormSelect = styled(Select, {
+  shouldForwardProp: (props) => props !== "isInForm",
+})(({ isInForm }: any) => ({
+  margin: isInForm ? "10px 0" : "10px",
   width: "45%",
   fontFamily: "Montserrat",
 }));
 
 export const FormButton = styled(Button)(() => ({
-  margin: "20px auto",
-  width: "300px",
-  height: "60px",
-  backgroundColor: "lightgrey",
-  fontWeight: 600,
+  minWidth: "200px",
   fontFamily: "Montserrat",
+  borderRadius: "4px !important",
+  margin: "10px !important",
 }));
 
-export const FormProgressIndicator = styled(CircularProgress)(() => ({
-  color: "blue",
-  position: "absolute",
-  top: "88%",
-  left: "49%",
-  marginTop: "-12px",
-  marginLeft: "-12px",
-}));
-
-export const MainHeading = styled(Typography)(() => ({
-  fontFamily: "Montserrat",
-  padding: "0 30px",
-  marginBottom: "50px",
-  objectFit: "cover",
-}));
-
-export const Heading = styled(Typography)(() => ({
+export const H = styled(Typography)(() => ({
   m: 2,
   fontFamily: "Montserrat",
   fontWeight: 600,
+  padding: "20px",
 }));
 
-export const Paragraph = styled(Typography)(() => ({
+export const P = styled(Typography)(() => ({
   fontFamily: "Montserrat",
   margin: "0 0 0px 0",
   padding: "12px",
 }));
 
-export const ButtonParagraph = styled(Typography)(() => ({
+export const ButtonP = styled(Typography)(() => ({
   flexGrow: 1,
   fontFamily: "Montserrat",
   margin: "2px",
+  padding: "12px",
 }));
