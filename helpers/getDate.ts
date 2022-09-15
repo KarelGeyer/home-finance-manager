@@ -13,7 +13,7 @@ export const getDate = (): FormmatedDate => {
   const year = date.getFullYear();
   const day = `${date}`.split(" ")[2];
 
-  const monthNames = [
+  const MONTH_NAMES = [
     "january",
     "feburary",
     "march",
@@ -27,7 +27,7 @@ export const getDate = (): FormmatedDate => {
     "november",
     "december",
   ];
-  const currentMonthName = monthNames[month];
+  const currentMonthName = MONTH_NAMES[month];
   const currentMonth = month < 10 ? `0${month}` : month;
 
   return {
