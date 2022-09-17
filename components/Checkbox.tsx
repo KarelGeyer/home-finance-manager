@@ -14,9 +14,8 @@ export const CustomCheckbox: React.FC<IProps> = ({
 }) => {
   return (
     <FormControlLabel
-      defaultChecked={isChecked}
       label={label}
-      control={<Checkbox onChange={onChange} />}
+      control={<Checkbox checked={isChecked} onChange={onChange} />}
     />
   );
 };
