@@ -3,9 +3,17 @@ import {
   setDate,
   setPersonFilter,
   setSortFilter,
-  BaseDataState,
+  setTransactionTypeFilter,
+  setTeamIds,
 } from "./baseData";
+import { setTransaction } from "./transaction";
 
-export { setDate, setEmail, setPersonFilter, setSortFilter };
-
-export type { BaseDataState };
+export {
+  setDate,
+  setEmail,
+  setPersonFilter,
+  setSortFilter,
+  setTransactionTypeFilter,
+  setTeamIds,
+  setTransaction,
+};
