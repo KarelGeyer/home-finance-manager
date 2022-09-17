@@ -12,8 +12,12 @@ export interface IProps {
 const Page: React.FC<IProps> = ({ children }) => {
   const { pathname } = useRouter();
   const headingName = getFormattedRouteName(pathname);
-  const { hasGroupFilter, hasSortFilter, hasMonthpicker } =
-    getPageAttrs(headingName);
+  const {
+    hasGroupFilter,
+    hasSortFilter,
+    hasMonthpicker,
+    hastransactionTypeFilter,
+  } = getPageAttrs(headingName);
 
   return (
     <>
@@ -24,6 +28,7 @@ const Page: React.FC<IProps> = ({ children }) => {
             hasGroupFilter={hasGroupFilter}
             hasSortFilter={hasSortFilter}
             hasMonthPicker={hasMonthpicker}
+            hastransactionTypeFilter={hastransactionTypeFilter}
           />
           <GridContainer container>{children}</GridContainer>
         </Section>
