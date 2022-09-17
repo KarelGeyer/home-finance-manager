@@ -13,6 +13,8 @@ import { CustomSelect, IProps as CustomSelectProps } from "./Select";
 import { Transaction, IProps as TransactionProps } from "./Transaction";
 import { CustomInput, IProps as CustomInputProps } from "./Input";
 import { CustomCheckbox, IProps as CustomCheckboxProps } from "./Checkbox";
+import { Loan, IProps as LoanProps } from "./Loan";
+import { CustomTab, IProps as CustomTabProps } from "./Tab";
 
 export {
   AccountInfo,
@@ -30,6 +32,8 @@ export {
   Transaction,
   CustomInput,
   CustomCheckbox,
+  Loan,
+  CustomTab,
 };
 
 export type {
@@ -48,4 +52,6 @@ export type {
   TransactionProps,
   CustomInputProps,
   CustomCheckboxProps,
+  LoanProps,
+  CustomTabProps,
 };
