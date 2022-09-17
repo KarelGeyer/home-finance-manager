@@ -1,12 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQuery } from "@apollo/client";
 
-import { getDate } from "../../helpers";
+import { setTransaction } from "../../state/reducers";
+import { setLoan } from "../../state/reducers/loan";
+
+import { CURRENCY } from "../../types/enums";
+
+import { sortData, SORT_TRANSACTION_TYPES } from "../../helpers";
+
 import {
+  changeLoan,
+  changeTransaction,
+  createLoan,
+  createTransaction,
+  CREATE_LOAN,
   CREATE_TRANSACTION,
-  GET_TRANSACTIONS,
+  GET_TEAM_LOANS,
+  GET_TEAM_TRANSACTIONS,
   GET_USER,
+  UPDATE_LOAN,
   UPDATE_TRANSACTION,
 } from "../../graphql";
 
@@ -15,7 +28,9 @@ import {
   CustomCheckbox,
   CustomInput,
   CustomSelect,
+  CustomTab,
   Heading,
+  Loan as LoanComponent,
   Transaction,
 } from "../../components";
 
@@ -24,74 +39,38 @@ import Grid from "@mui/material/Grid";
 
 import { TransactionGrid } from "../../styles/pages/transactions";
 import { Form } from "../../styles/global";
-import { Loan } from "../overview";
-
-export interface Transaction {
-  name: string;
-  person: {
-    name: string;
-  };
-  category: string;
-  sum: number;
-  date: string;
-  currency: string;
-  month?: string;
-  isLoan?: boolean;
-  tags?: string | string[];
-  __v?: number;
-  _id: string;
-}
-
-export interface TransactionDetails {
-  id: string;
-  name: string;
-  category: string;
-  sum: number;
-  currency: CURRENCY;
-  isLoan?: boolean;
-  date?: string;
-  personId: string;
-}
-
-export enum CURRENCY {
-  CZK = "CZK",
-  EUR = "EUR",
-}
 
 const Transactions: React.FC = () => {
-  const [isNewTransaction, setIsNewTransaction] = useState<boolean>(true);
-  const [transactions, setTransactions] = useState<Transaction[]>();
-  const [loans, setLoans] = useState<any>();
+  const [activeTab, setActiveTab] = useState<string>("0");
+  const dispatch = useDispatch();
 
   const {
     chosenDate,
     userEmail,
     sortFilter,
-  }: { chosenDate: string; userEmail: string; sortFilter: string } =
-    useSelector((state) => state.baseData);
+    transactionTypeFilter,
+    teamIds,
+  }: {
+    chosenDate: string;
+    userEmail: string;
+    sortFilter: string;
+    transactionTypeFilter: string;
+    teamIds: string[] | string;
+    //@ts-ignore
+  } = useSelector((state) => state.baseData);
+  //@ts-ignore
+  const transactionState = useSelector((state) => state.transaction);
+  //@ts-ignore
+  const loanState = useSelector((state) => state.loan);
+  console.log(loanState);
 
-  const [transactionDetails, setTransactionDetails] =
-    useState<TransactionDetails>({
-      id: "",
-      name: "",
-      category: "",
-      sum: 0,
-      isLoan: false,
-      date: getDate().fullDate,
-      currency: CURRENCY.CZK,
-      personId: "",
-    });
+  const { data: teamLoansData, refetch: teamLoansRefetch } = useQuery(
+    GET_TEAM_LOANS,
+    { variables: { ids: teamIds } }
+  );
 
-  const {
-    loading: isFetchingTransactions,
-    error: transactionsError,
-    data: transactionsData,
-    refetch: transactionsRefetch,
-  } = useQuery(GET_TRANSACTIONS, {
-    variables: {
-      email: userEmail,
-    },
-  });
+  const { data: teamTransactionsData, refetch: teamTransactionsRefetch } =
+    useQuery(GET_TEAM_TRANSACTIONS, { variables: { ids: teamIds } });
 
   const {
     loading: isFetchingUser,
@@ -104,195 +83,84 @@ const Transactions: React.FC = () => {
     },
   });
 
-  const [updateMutation, { data: updateData, error: updateError }] =
-    useMutation(UPDATE_TRANSACTION);
+  const loans = useMemo(() => {
+    return (
+      teamLoansData?.teamLoans &&
+      sortData({
+        data: teamLoansData.teamLoans,
+        dataType: "Loan",
+        chosenDate,
+        filter: sortFilter,
+      })
+    );
+  }, [teamLoansData, sortFilter, chosenDate]);
 
-  const [createMutation, { data: createData, error: createError }] =
-    useMutation(CREATE_TRANSACTION);
-
-  const cleanTransactions: Transaction[] =
-    transactions &&
-    transactions.filter((transaction) => {
-      const transactionYear = transaction.date.split("-")[0];
-      const transactionMonth = transaction.date.split("-")[1];
-
-      const thisMonthTransaction =
-        parseInt(transactionYear) == parseInt(chosenDate.split("-")[0]) &&
-        parseInt(transactionMonth) == parseInt(chosenDate.split("-")[1]);
-
-      return thisMonthTransaction;
-    });
-
-  const cleanLoans: Loan[] =
-    loans &&
-    loans.filter((loan) => {
-      const loanYear = loan.date.split("-")[0];
-      const loanMonth = loan.date.split("-")[1];
-
-      const thisMonthLoan =
-        parseInt(loanYear) == parseInt(chosenDate.split("-")[0]) &&
-        parseInt(loanMonth) == parseInt(chosenDate.split("-")[1]);
-
-      return thisMonthLoan;
-    });
-
-  const sortedLoans: Loan[] = useMemo(() => {
-    if (cleanLoans) {
-      if (sortFilter === "Date") {
-        return cleanLoans.sort((loan_1, loan_2) => {
-          const date_1: number = parseInt(loan_1.date.split("-")[2]);
-          const date_2: number = parseInt(loan_2.date.split("-")[2]);
-          return date_1 - date_2;
-        });
-      }
-
-      if (sortFilter === "Amount") {
-        return cleanLoans.sort((loan_1, loan_2) => {
-          return loan_1.sum - loan_2.sum;
-        });
-      }
-
-      if (sortFilter === "User") {
-        return cleanLoans.sort((loan_1, loan_2) => {
-          //@ts-ignore
-          return loan_1.person.name - loan_2.person.name;
-        });
-      }
-    }
-  }, [sortFilter, cleanLoans]);
-
-  console.log(sortedLoans);
-
-  const sortedData: Transaction[] = useMemo(() => {
-    if (cleanTransactions) {
-      if (sortFilter === "Date") {
-        return cleanTransactions.sort((transaction_1, transaction_2) => {
-          const date_1: number = parseInt(transaction_1.date.split("-")[2]);
-          const date_2: number = parseInt(transaction_2.date.split("-")[2]);
-          return date_1 - date_2;
-        });
-      }
-
-      if (sortFilter === "Amount") {
-        return cleanTransactions.sort((transaction_1, transaction_2) => {
-          return transaction_1.sum - transaction_2.sum;
-        });
-      }
-
-      if (sortFilter === "User") {
-        return cleanTransactions.sort((transaction_1, transaction_2) => {
-          //@ts-ignore
-          return transaction_1.person.name - transaction_2.person.name;
-        });
-      }
-    }
-  }, [sortFilter, cleanTransactions]);
+  const transactions = useMemo(() => {
+    return (
+      teamTransactionsData?.teamTransactions &&
+      sortData({
+        data: teamTransactionsData?.teamTransactions,
+        dataType: "Loan",
+        chosenDate,
+        filter: sortFilter,
+      })
+    );
+  }, [teamTransactionsData, sortFilter, chosenDate]);
 
   useEffect(() => {
-    transactionsRefetch();
+    setActiveTab("0");
     userRefetch();
+    teamLoansRefetch();
+    teamTransactionsRefetch();
 
-    let transactions: Transaction[] = [];
-    let loans: Loan[] = [];
-    const teamData = transactionsData?.user.team;
-    teamData &&
-      teamData.forEach((user) => {
-        user.transactions.forEach((transaction) => {
-          transactions.push(transaction);
-        });
-        user.loans.forEach((transaction) => {
-          loans.push(transaction);
-        });
-      });
+    dispatch(
+      setTransaction({
+        ...transactionState,
+        personId: userData && userData.user.accountID,
+      })
+    );
+    dispatch(
+      setLoan({
+        ...loanState,
+        personId: userData && userData.user.accountID,
+      })
+    );
+  }, [teamLoansRefetch, teamTransactionsRefetch, userRefetch]);
 
-    setTransactions(transactions);
-    setLoans(loans);
-    setTransactionDetails({
-      ...transactionDetails,
-      personId: userData && userData.user.accountID,
-    });
-  }, [transactionsData, transactionsRefetch, userEmail, userData]);
-
-  const handleTransaction = (): void => {
-    const { id, name, currency, category, sum, isLoan, personId, date } =
-      transactionDetails;
-    if (name == "" || id == "" || category == "" || sum == 0) {
-      return;
-    }
-
-    const token = localStorage?.getItem("ref_sh_tkn");
-    if (!token) {
-      // THIS WILL NEED TO HAVE SOME LOGIC
-      console.log("missing token");
-    }
-
-    if (isNewTransaction) {
-      createMutation({
-        variables: {
-          transaction: {
-            name,
-            category,
-            sum,
-            currency,
-            date,
-            isLoan,
-            personId,
-          },
-        },
-        context: {
-          headers: {
-            "Content-Type": "application/json",
-            authorization: token,
-          },
-        },
-        refetchQueries: [{ query: GET_TRANSACTIONS }],
-      });
-    } else {
-      updateMutation({
-        variables: {
-          transaction: {
-            id,
-            name,
-            category,
-            sum,
-            date,
-            currency,
-            isLoan,
-          },
-        },
-        context: {
-          headers: {
-            "Content-Type": "application/json",
-            authorization: token,
-          },
-        },
-        refetchQueries: [{ query: GET_TRANSACTIONS }],
-      });
-    }
-
-    transactionsRefetch();
-  };
+  const formLabels = [SORT_TRANSACTION_TYPES[1], SORT_TRANSACTION_TYPES[2]];
+  const forms = [
+    <TransactionDetailsForm
+      teamTransactionsRefetch={teamTransactionsRefetch}
+      key={1}
+    />,
+    <LoanDetailsForm teamLoansRefetch={teamLoansRefetch} key={2} />,
+  ];
 
   return (
     <>
       <TransactionGrid item xs={12} md={5}>
         <Heading variant="h3">Transactions</Heading>
         <Box sx={{ overflow: "scroll", overflowX: "hidden" }}>
-          {sortedData &&
-            sortedData.map((transaction: any, index: number) => (
+          {transactions?.dataBySort &&
+            (transactionTypeFilter === "All" ||
+              transactionTypeFilter === "Transactions") &&
+            transactions.dataBySort.map((transaction: any) => (
               <Transaction
-                name={transaction.name}
-                user={transaction.person}
-                price={transaction.sum}
-                category={transaction.category}
-                currency={transaction.currency}
-                isLoan={transaction.isLoan}
-                date={transaction.date}
-                id={transaction.id}
+                transaction={transaction}
                 key={transaction.id}
-                transactionDetails={transactionDetails}
-                setTransactionDetails={setTransactionDetails}
-                transactionsRefetch={transactionsRefetch}
+                teamTransactionsRefetch={teamTransactionsRefetch}
+                setUpdateVisible={setActiveTab}
+              />
+            ))}
+          {loans?.dataBySort &&
+            (transactionTypeFilter === "All" ||
+              transactionTypeFilter === "Loans") &&
+            loans.dataBySort.map((loan: any) => (
+              <LoanComponent
+                loan={loan}
+                key={loan.id}
+                loansRefetch={teamLoansRefetch}
+                setUpdateVisible={setActiveTab}
               />
             ))}
         </Box>
@@ -301,83 +169,251 @@ const Transactions: React.FC = () => {
         item
         xs={12}
         md={7}
-        sx={{ textAlign: "center", padding: "160px 70px" }}
+        sx={{ textAlign: "center", padding: "40px 70px" }}
       >
-        <Heading variant="h3">Selected Transaction</Heading>
-        <Form component="form">
-          <CustomInput
-            label="Name"
-            type="text"
-            value={transactionDetails.name}
-            onChange={(e) => {
-              setTransactionDetails({
-                ...transactionDetails,
+        <CustomTab
+          labelsList={formLabels}
+          childrenList={forms}
+          activeTab={activeTab}
+        />
+      </Grid>
+    </>
+  );
+};
+
+const TransactionDetailsForm = ({ teamTransactionsRefetch }) => {
+  const [isNew, setIsNew] = useState<boolean>(true);
+  const [createTransactionMutation] = useMutation(CREATE_TRANSACTION);
+  const [updateTransactionMutation] = useMutation(UPDATE_TRANSACTION);
+  //@ts-ignore
+  const transactionState = useSelector((state) => state.transaction);
+  const dispatch = useDispatch();
+
+  return (
+    <>
+      <Heading variant="h3">Transaction</Heading>
+      <Form component="form">
+        <CustomInput
+          label="Name"
+          type="text"
+          value={transactionState.name}
+          onChange={(e) => {
+            dispatch(
+              setTransaction({
+                ...transactionState,
                 name: e.target.value,
-              });
-            }}
-          />
-          <CustomInput
-            label="Category"
-            type="text"
-            value={transactionDetails.category}
-            onChange={(e) => {
-              setTransactionDetails({
-                ...transactionDetails,
+              })
+            );
+          }}
+        />
+        <CustomInput
+          label="Category"
+          type="text"
+          value={transactionState.category}
+          onChange={(e) => {
+            dispatch(
+              setTransaction({
+                ...transactionState,
                 category: e.target.value,
-              });
-            }}
-          />
-          <CustomInput
-            label="Sum"
-            type="number"
-            value={transactionDetails.sum}
-            onChange={(e) => {
-              setTransactionDetails({
-                ...transactionDetails,
+              })
+            );
+          }}
+        />
+        <CustomInput
+          label="Sum"
+          type="number"
+          value={transactionState.sum}
+          onChange={(e) => {
+            dispatch(
+              setTransaction({
+                ...transactionState,
                 sum: parseInt(e.target.value),
-              });
-            }}
-          />
-          <CustomInput
-            label="Date"
-            type="date"
-            value={transactionDetails.date}
-            onChange={(e) => {
-              setTransactionDetails({
-                ...transactionDetails,
+              })
+            );
+          }}
+        />
+        <CustomInput
+          label="Date"
+          type="date"
+          value={transactionState.date}
+          onChange={(e) => {
+            dispatch(
+              setTransaction({
+                ...transactionState,
                 date: e.target.value,
-              });
-            }}
-          />
-          <CustomSelect
-            label="currency-select-label"
-            value={transactionDetails.currency}
-            //@ts-ignore
-            onChange={(e: { target: { value: CURRENCY } }) =>
-              setTransactionDetails({
-                ...transactionDetails,
+              })
+            );
+          }}
+        />
+        <CustomSelect
+          label="currency-select-label"
+          value={transactionState.currency}
+          //@ts-ignore
+          onChange={(e: { target: { value: CURRENCY } }) => {
+            dispatch(
+              setTransaction({
+                ...transactionState,
                 currency: e.target.value,
               })
-            }
-            list={["CZK", "EUR"]}
-          />
-          <CustomCheckbox
-            isChecked={true}
-            onChange={(e) => setIsNewTransaction(e.target.checked)}
-            label="Is New"
-          />
+            );
+          }}
+          list={["CZK", "EUR"]}
+        />
+        <CustomCheckbox
+          isChecked={isNew}
+          onChange={() => setIsNew(!isNew)}
+          label="Is new"
+        />
+        {isNew ? (
           <CustomButton
             type="button"
             variant="contained"
             size="medium"
-            onClick={handleTransaction}
+            onClick={() =>
+              createTransaction({
+                transactionState,
+                createTransactionMutation,
+                teamTransactionsRefetch,
+              })
+            }
             btnColor="primary"
             isSingle={true}
           >
-            submit
+            Submit New
           </CustomButton>
-        </Form>
-      </Grid>
+        ) : (
+          <CustomButton
+            type="button"
+            variant="contained"
+            size="medium"
+            onClick={() =>
+              changeTransaction({
+                transactionState,
+                updateTransactionMutation,
+                teamTransactionsRefetch,
+              })
+            }
+            btnColor="primary"
+            isSingle={true}
+          >
+            Change Transaction
+          </CustomButton>
+        )}
+      </Form>
+    </>
+  );
+};
+
+const LoanDetailsForm = ({ teamLoansRefetch }) => {
+  const [isNew, setIsNew] = useState<boolean>(true);
+  const [updateLoanMutation] = useMutation(UPDATE_LOAN);
+  const [createLoanMutation] = useMutation(CREATE_LOAN);
+  //@ts-ignore
+  const loanState = useSelector((state) => state.loan);
+  const dispatch = useDispatch();
+
+  return (
+    <>
+      <Heading variant="h3">Loan</Heading>
+      <Form component="form">
+        <CustomInput
+          label="Name"
+          type="text"
+          value={loanState.name}
+          onChange={(e) => {
+            dispatch(
+              setLoan({
+                ...loanState,
+                name: e.target.value,
+              })
+            );
+          }}
+        />
+        <CustomInput
+          label="Sum"
+          type="number"
+          value={loanState.sum}
+          onChange={(e) => {
+            dispatch(
+              setLoan({
+                ...loanState,
+                sum: parseInt(e.target.value),
+              })
+            );
+          }}
+        />
+        <CustomInput
+          label="Date"
+          type="date"
+          value={loanState.date}
+          onChange={(e) => {
+            dispatch(
+              setLoan({
+                ...loanState,
+                date: e.target.value,
+              })
+            );
+          }}
+        />
+        <CustomSelect
+          label="currency-select-label"
+          value={loanState.currency}
+          //@ts-ignore
+          onChange={(e: { target: { value: CURRENCY } }) => {
+            dispatch(
+              setLoan({
+                ...loanState,
+                currency: e.target.value,
+              })
+            );
+          }}
+          list={["CZK", "EUR"]}
+        />
+        <CustomCheckbox
+          isChecked={loanState.isPayed}
+          onChange={(e) => {
+            dispatch(
+              setLoan({
+                ...loanState,
+                isPayed: e.target.checked,
+              })
+            );
+          }}
+          label="Is Payed"
+        />
+        <CustomCheckbox
+          isChecked={isNew}
+          onChange={() => setIsNew(!isNew)}
+          label="Is new"
+        />
+        {isNew ? (
+          <CustomButton
+            type="button"
+            variant="contained"
+            size="medium"
+            onClick={() =>
+              createLoan({ loanState, createLoanMutation, teamLoansRefetch })
+            }
+            btnColor="primary"
+            isSingle={true}
+          >
+            Submit New
+          </CustomButton>
+        ) : (
+          <CustomButton
+            type="button"
+            variant="contained"
+            size="medium"
+            onClick={() =>
+              changeLoan({ loanState, updateLoanMutation, teamLoansRefetch })
+            }
+            btnColor="primary"
+            isSingle={true}
+          >
+            Change Loan
+          </CustomButton>
+        )}
+      </Form>
     </>
   );
 };
