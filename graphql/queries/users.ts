@@ -31,3 +31,13 @@ export const GET_TEAM = gql`
     }
   }
 `;
+
+export const GET_TEAM_IDS = gql`
+  query Query($email: String) {
+    user(email: $email) {
+      team {
+        accountID
+      }
+    }
+  }
+`;

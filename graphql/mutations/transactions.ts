@@ -20,7 +20,6 @@ export const UPDATE_TRANSACTION = gql`
       sum
       currency
       date
-      isLoan
     }
   }
 `;
@@ -33,7 +32,6 @@ export const CREATE_TRANSACTION = gql`
       sum
       currency
       date
-      isLoan
       personId
     }
   }

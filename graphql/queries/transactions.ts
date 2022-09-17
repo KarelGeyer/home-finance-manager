@@ -32,24 +32,25 @@ export const GET_TRANSACTIONS = gql`
             surname
           }
         }
-        loans {
-          name
-          sum
-          currency
-          date
-          creditorEmail
-          debtorEmail
-          creditor {
-            name
-            surname
-            email
-          }
-          debtor {
-            name
-            surname
-            email
-          }
-        }
+      }
+    }
+  }
+`;
+
+export const GET_TEAM_TRANSACTIONS = gql`
+  query Query($ids: [String]!) {
+    teamTransactions(ids: $ids) {
+      name
+      category
+      personId
+      sum
+      currency
+      date
+      teamId
+      id
+      person {
+        name
+        surname
       }
     }
   }
