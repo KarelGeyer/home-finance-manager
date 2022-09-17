@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useMutation } from "@apollo/client";
 import { AUTHENTICATE } from "../graphql";
 import { useDispatch } from "react-redux";
-import { setEmail } from "../state/reducers";
+import { setEmail, setTeamIds } from "../state/reducers";
 
 export interface IProps {
   children: React.FC | Element | ReactElement;
@@ -17,7 +17,10 @@ const AuthWrapper: React.FC<IProps> = ({ children }) => {
 
   useEffect((): any => {
     const email = localStorage?.getItem("email");
+    const teamIds = localStorage?.getItem("team_ids").split(",");
+
     dispatch(setEmail(email));
+    dispatch(setTeamIds(teamIds));
     const { pathname } = router;
 
     //   if (pathname != "/login" && pathname != "/") {
