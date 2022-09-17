@@ -1,17 +1,26 @@
 import { NextRouter, useRouter } from "next/dist/client/router";
-import { useState } from "react";
-
 import { Container, Division, LineBar } from "../styles/components/appBar";
 import { useDispatch, useSelector } from "react-redux";
-import { setDate, setPersonFilter, setSortFilter } from "../state/reducers";
+import {
+  setDate,
+  setPersonFilter,
+  setSortFilter,
+  setTransactionTypeFilter,
+} from "../state/reducers";
 import { CustomInput, CustomMenu, CustomSelect, Heading } from ".";
-import { ROUTE_NAMES, SORT_FILTER_LABELS } from "../helpers";
+import {
+  ROUTE_NAMES,
+  SORT_FILTER_LABELS,
+  SORT_TRANSACTION_TYPES,
+  SORT_USERS,
+} from "../helpers";
 
 export interface IProps {
   heading: string;
   hasGroupFilter?: boolean;
   hasSortFilter?: boolean;
   hasMonthPicker?: boolean;
+  hastransactionTypeFilter?: boolean;
 }
 
 export const AppBarMenu: React.FC<IProps> = ({
@@ -19,16 +28,15 @@ export const AppBarMenu: React.FC<IProps> = ({
   hasGroupFilter,
   hasSortFilter,
   hasMonthPicker,
+  hastransactionTypeFilter,
 }) => {
   const links: string[] = ROUTE_NAMES.filter(
     (link) => link.toLocaleLowerCase() !== heading.toLocaleLowerCase()
   );
   const router: NextRouter = useRouter();
-  const [anchorEl, setAnchorEl] = useState<Element>(null);
-  const open = Boolean(anchorEl);
-  const { chosenDate, personFilter, sortFilter } = useSelector(
-    (state) => state.baseData
-  );
+  const { chosenDate, personFilter, sortFilter, transactionTypeFilter } =
+    //@ts-ignore
+    useSelector((state) => state.baseData);
 
   const dispatch = useDispatch();
 
@@ -37,20 +45,22 @@ export const AppBarMenu: React.FC<IProps> = ({
   };
 
   const selectSortFilter = (e: any): void => {
-    console.log(e);
     dispatch(setSortFilter(e.target.value));
   };
 
+  const handleMonthpicker = (e: any): void => {
+    dispatch(setDate(e.target.value));
+  };
+
+  const selectTransactionTypeFilter = (e: any): void => {
+    dispatch(setTransactionTypeFilter(e.target.value));
+  };
   const navigateTo = (e: any): void => {
     const link: string = e.target.innerText.toLowerCase();
 
     if (link.length >= 1) {
       router.push(`/${link}`);
     }
-  };
-
-  const handleMonthpicker = (e: any): void => {
-    dispatch(setDate(e.target.value));
   };
 
   return (
@@ -70,12 +80,21 @@ export const AppBarMenu: React.FC<IProps> = ({
             />
           )}
 
+          {hastransactionTypeFilter && (
+            <CustomSelect
+              label={"group-select"}
+              value={transactionTypeFilter}
+              onChange={selectTransactionTypeFilter}
+              list={SORT_TRANSACTION_TYPES}
+            />
+          )}
+
           {hasGroupFilter && (
             <CustomSelect
               label={"group-select"}
               value={personFilter}
               onChange={selectPersonFilter}
-              list={["Group", "Person1", "Person2"]}
+              list={SORT_USERS}
             />
           )}
 
