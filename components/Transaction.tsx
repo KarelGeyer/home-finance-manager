@@ -1,88 +1,60 @@
 import { Dispatch, SetStateAction } from "react";
-import { useMutation } from "@apollo/client";
+import { ApolloQueryResult, useMutation } from "@apollo/client";
+import { setTransaction } from "../state/reducers";
+import { useDispatch, useSelector } from "react-redux";
 
-import { DELETE_TRANSACTION, GET_TRANSACTIONS } from "../graphql";
+import { Transaction as TransactionType } from "../types/types";
+
+import { deleteTransaction, DELETE_TRANSACTION } from "../graphql";
 
 import Box from "@mui/material/Box";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+
+import { Badge, CustomButton, Paragraph } from ".";
+import { CustomDivider } from "./Divider";
 
 import {
   TransactionActionsBox,
   TransactionCard,
   TransactionContentBox,
 } from "../styles/components/transaction";
-import { Badge, CustomButton, Paragraph } from ".";
-import { CustomDivider } from "./Divider";
 
 export interface IProps {
-  name: string;
-  user: {
-    name: string;
-    surname: string;
-  };
-  price: number;
-  category: string;
-  isLoan: boolean;
-  currency: string;
-  id: string;
-  date: string;
-  setTransactionDetails: Dispatch<SetStateAction<any>>;
-  transactionDetails: any;
-  transactionsRefetch: Function;
+  transaction: TransactionType;
+  setUpdateVisible: Dispatch<SetStateAction<any>>;
+  teamTransactionsRefetch: (
+    variables?: Partial<{
+      ids: string | string[];
+    }>
+  ) => Promise<ApolloQueryResult<any>>;
 }
 
 export const Transaction: React.FC<IProps> = ({
-  id,
-  name,
-  user,
-  price,
-  category,
-  currency,
-  isLoan,
-  date,
-  setTransactionDetails,
-  transactionDetails,
-  transactionsRefetch,
+  transaction,
+  setUpdateVisible,
+  teamTransactionsRefetch,
 }) => {
-  const personName = `${user.name} ${user.surname}`;
+  const { id, name, person, sum, category, currency, date } = transaction;
+  const personName = `${person.name} ${person.surname}`;
   const [deleteMutation, { data: data, error: deleteError }] =
     useMutation(DELETE_TRANSACTION);
+  //@ts-ignore
+  const transactionState = useSelector((state) => state.transaction);
+  const dispatch = useDispatch();
 
   const chooseTransaction = () => {
-    setTransactionDetails({
-      ...transactionDetails,
-      id,
-      name,
-      category,
-      sum: price,
-      currency,
-    });
-  };
-
-  const deleteTransaction = () => {
-    const token = localStorage?.getItem("ref_sh_tkn");
-
-    deleteMutation({
-      variables: {
-        transaction: {
-          id,
-          name,
-          category,
-          sum: price,
-          currency,
-          isLoan,
-        },
-      },
-      context: {
-        headers: {
-          "Content-Type": "application/json",
-          authorization: token,
-        },
-      },
-      refetchQueries: [{ query: GET_TRANSACTIONS }],
-    });
-    transactionsRefetch();
+    dispatch(
+      setTransaction({
+        ...transactionState,
+        id,
+        name,
+        category,
+        sum,
+        currency,
+      })
+    );
+    setUpdateVisible("0");
   };
 
   return (
@@ -106,7 +78,14 @@ export const Transaction: React.FC<IProps> = ({
             size="large"
             iconColor="inherit"
             aria-label="delete transaction"
-            onClick={deleteTransaction}
+            onClick={() =>
+              deleteTransaction({
+                //@ts-ignore
+                transactionState: transaction,
+                deleteMutation,
+                teamTransactionsRefetch,
+              })
+            }
           >
             <DeleteIcon />
           </CustomButton>
@@ -118,7 +97,7 @@ export const Transaction: React.FC<IProps> = ({
       <TransactionContentBox>
         <Paragraph variant="subtitle1">{personName}</Paragraph>
         <CustomDivider variant="inset" orientation="vertical" />
-        <Paragraph variant="subtitle1">{price}</Paragraph>
+        <Paragraph variant="subtitle1">{sum}</Paragraph>
         <CustomDivider variant="inset" orientation="vertical" />
         <Paragraph variant="subtitle1">{date}</Paragraph>
       </TransactionContentBox>
