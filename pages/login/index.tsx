@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { NextRouter, useRouter } from "next/dist/client/router";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 
-import { LOGIN } from "../../graphql";
+import { GET_TEAM_IDS, LOGIN } from "../../graphql";
 import { CustomInput, Heading } from "../../components";
 
 import {
@@ -28,6 +28,12 @@ const Index: React.FC = () => {
   const [login, { data: data, loading: isLoggingIn, error: loginError }] =
     useMutation(LOGIN);
 
+  const { data: userData, refetch: userRefetch } = useQuery(GET_TEAM_IDS, {
+    variables: {
+      email: credentials.email,
+    },
+  });
+
   const handleSubmit = (): void => {
     login({
       variables: { user: credentials },
@@ -44,9 +50,19 @@ const Index: React.FC = () => {
     if (data) {
       const { login: refreshToken }: { login: { refreshToken: string } } = data;
 
-      localStorage.setItem("ref_sh_tkn", refreshToken.refreshToken);
-      localStorage.setItem("email", credentials.email);
-      router.push("/");
+      userRefetch();
+
+      if (userData) {
+        const teamIds = userData.user.team.map((user) => {
+          return user.accountID;
+        });
+
+        localStorage.setItem("team_ids", teamIds);
+        localStorage.setItem("ref_sh_tkn", refreshToken.refreshToken);
+        localStorage.setItem("email", credentials.email);
+
+        router.push("/");
+      }
     }
   };
 
